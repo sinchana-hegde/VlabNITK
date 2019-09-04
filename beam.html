@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 
-<title>SOLVE - Mechanics of Machines Lab - Slider Crank Mechanism</title>
+<title>SOLVE - Beam Questions</title>
 
 <!-- DND-Required css and js files -->
 <link rel="stylesheet" href="sins/MOMstyle.css" />
@@ -20,32 +20,28 @@
 <script type="text/javascript" >
 //Script specific to simulation
 
-//program variables
-//controls section
-var simstatus=0; 
-// var rotstatus=1;
+
 //comments section
 var commenttext="Some Text";
 var commentloc=0;
-//computing section
-var x_offset = 100;
-var y_offset = 250;
 
+
+//simulation constants
+var x_offset = 100; //local origin - x
+var y_offset = 250; //local origin - y
 var trans= new point(x_offset,y_offset);
-//var offset = 25;
+var beamLength = 400;
+var beamWidth = 10;
+var support_length = 50;
+var support_width = 20;
+var deflection_value = 100;
+var number_of_lines = 100;
+var e = 25; //e in the formula
+var i = 25; //i in the formula
+
 
 var o= new point(0,0,"");
-var a= new point(0,0,"");
-var b= new point(0,0,"");
-//var d= new point(0,0,"D");
 
-var theta2 = 40; // all angles to be defined either in degrees only or radians only throughout the program and convert as and when required
-var phi=0; // All angles in Degrees. (mention the specification in the script like here) 
-var omega2=1; // angular velocity in rad/s
-//var omega3=0, omega4=0;
-
-var r=0,l=0;
-var flaggrashof=true;
 //graphics section
 var canvas;
 var ctx;
@@ -56,26 +52,23 @@ var time=0;
 //point tracing section
 var ptx = [];
 var pty = [];
-//click status of legend and quick reference
-var legendCS = false;
-var quickrefCS = false;
-//temporary or dummy variables
-var temp=0;
-var offset=0;
+
+
+const FIXED_BEAM = 0;
+const CANTILEVER_BEAM = 1;
+const THIRD_ONE = 2;
+
+var scene = FIXED_BEAM;
 /*
 // for trials during development
 function trythis()
-{ 		alert();}
+{     alert();}
 */
 
 //change simulation specific css content. e.g. padding on top of variable to adjust appearance in variables window
 function editcss()
 {
 $('.variable').css('padding-top','40px');
-
-
-//$('#legend').css("width",document.getElementById('legendimg').width+"px");
-//$('#quickref').css("height",document.getElementById('quickrefimg').height+"px");
 
 }
 
@@ -85,173 +78,49 @@ function startsim()
 simTimeId=setInterval("time=time+0.1; varupdate(); ",'100');
 }
 
-// switches state of simulation between 0:Playing & 1:Paused
-function simstate()
-{
-  var imgfilename=document.getElementById('playpausebutton').src;
-  imgfilename = imgfilename.substring(imgfilename.lastIndexOf('/') + 1, imgfilename.lastIndexOf('.'));
-  if (imgfilename=="bluepausedull")
-  {
-    document.getElementById('playpausebutton').src="sins/blueplaydull.png";
-	 clearInterval(simTimeId);
-    simstatus=1;
-    $('#forcespinner').spinner("value",theta2);			//to set simulation parameters on pause
-    pauseTime=setInterval("varupdate();",'100');
-  }
-    if (imgfilename=="blueplaydull")
-  {
-  	 time=0;			
-  	 clearInterval(pauseTime);
-    document.getElementById('playpausebutton').src="sins/bluepausedull.png";
-    simTimeId=setInterval("time=time+0.1; varupdate(); ",'100');    
-    simstatus=0;
-  } 
-}
-
-// switches state of rotation between 1:CounterClockWise & -1:Clockwise
-// function rotstate()
-// {
-//   var imgfilename=document.getElementById('rotationbutton').src;
-//   imgfilename = imgfilename.substring(imgfilename.lastIndexOf('/') + 1, imgfilename.lastIndexOf('.'));
-//   if (imgfilename=="bluecwdull")
-//   {
-//     document.getElementById('rotationbutton').src="sins/blueccwdull.png";
-//     rotstatus=-1;
-//   }
-//     if (imgfilename=="blueccwdull")
-//   {
-//     document.getElementById('rotationbutton').src="sins/bluecwdull.png";
-//     rotstatus=1;
-//   } 
-// }
-
-/*
-//Displaying Equations for Quick Reference
-function showEquations()
-{
-	if(quickrefCS)
-	{
-		$('#quickreficon').css('border', 'double');
-		$('#quickref').css('width', '0px');
-		$('#quickref').css('left', '600px');
-		$('#quickref').css('border', '0px');
-		quickrefCS=false;	
-		
-	}
-	else
-	{
-		$('#quickreficon').css('border', 'inset red');
-		$('#quickref').css('width', document.getElementById('quickrefimg').width+"px");
-		$('#quickref').css("left", 599-document.getElementById('quickrefimg').width+"px");
-		$('#quickref').css('border', 'solid 1px');
-		quickrefCS=true;	
-	}
-}
-
-//Displaying Legend
-function showLegend()
-{
-	if(legendCS)
-	{
-		$('#legendicon').css('border', 'double');
-		$('#legend').css('height', '0px');
-		$('#legend').css('border', '0px');
-		legendCS=false;	
-	}
-	else
-	{
-		$('#legendicon').css('border', 'inset red');
-		$('#legend').css("height", document.getElementById('legendimg').height+"px");
-		$('#legend').css('border', 'solid 1px');
-		legendCS=true;	
-	}
-}
-*/
-
-
 //Initialise system parameters here
 function varinit()
 {
-varchange();		
-//Variable r1 slider and number input types
-//$('#r1slider').slider("value", 80);	
-//$('#r1spinner').spinner("value", 80);
-//Variable r2 slider and number input types
-$('#aslider').slider("value", 40);	
-$('#aspinner').spinner("value", 50);
-//Variable r3 slider and number input types
-// $('#r3slider').slider("value", 100);	
-// $('#r3spinner').spinner("value", 100);
-//Variable r4 slider and number input types
-//$('#r4slider').slider("value", 60);	
-//$('#r4spinner').spinner("value", 60);
-//Variable theta2 slider and number input types
-$('#forceslider').slider("value", 40);	
-$('#forcespinner').spinner("value", 40);
-//Variable omega2 slider and number input types
-// $('#omega2slider').slider("value", 1);	
-// $('#omega2spinner').spinner("value", 1);
+  varchange();
+  var init_a = x_offset + beamLength / 2; 
+  var init_force = 0;
+
+  $('#aslider').slider("value", init_a);  
+  $('#aspinner').spinner("value", init_a);
+
+
+
+  $('#forceslider').slider("value", init_force);  
+  $('#forcespinner').spinner("value", init_force);
+
 }
 
 // Initialise and Monitor variable containing user inputs of system parameters.
 //change #id and repeat block for new variable. Make sure new <div> with appropriate #id is included in the markup
 function varchange()
 {
-/*//Variable r1 slider and number input types
-$('#r1slider').slider({ max : 100, min : 20, step : 2 });		// slider initialisation : jQuery widget
-$('#r1spinner').spinner({ max : 100, min : 20, step : 2 });		// number initialisation : jQuery widget			
-// monitoring change in value and connecting slider and number
-// setting trace point coordinate arrays to empty on change of link length
-$( "#r1slider" ).on( "slide", function( e, ui ) { $('#r1spinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
-$( "#r1spinner" ).on( "spin", function( e, ui ) { $('#r1slider').slider("value",ui.value); ptx=[]; pty=[]; } );
-$( "#r1spinner" ).on( "change", function() {  varchange() } );
-*/
-//Variable r2 slider and number input types
-$('#aslider').slider({ max : 500, min : 0, step : 5 });		// slider initialisation : jQuery widget
-$('#aspinner').spinner({ max : 500, min : 0, step : 5 });		// number initialisation : jQuery widget			
-// monitoring change in value and connecting slider and number
-// setting trace point coordinate arrays to empty on change of link length
-$( "#aslider" ).on( "slide", function( e, ui ) { $('#aspinner').spinner("value",ui.value); ptx=[]; pty=[]; r2change(); } );
-$( "#aspinner" ).on( "spin", function( e, ui ) { $('#aslider').slider("value",ui.value); ptx=[]; pty=[]; } );
-$( "#aspinner" ).on( "change", function() {  varchange() } );
+  //Variable a postion slider and number input types
+  $('#aslider').slider({ max : beamLength, min : 0, step : 5 });    // slider initialisation : jQuery widget
+  $('#aspinner').spinner({ max : beamLength, min : 0, step : 5 });    // number initialisation : jQuery widget  
 
-//Variable r3 slider and number input types
-// $('#r3slider').slider({ max : 500, min : 0, step : 5 });		// slider initialisation : jQuery widget
-// $('#r3spinner').spinner({ max : 500, min : 0, step : 5 });		// number initialisation : jQuery widget			
-// monitoring change in value and connecting slider and number
-// setting trace point coordinate arrays to empty on change of link length
-// $( "#r3slider" ).on( "slide", function( e, ui ) { $('#r3spinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
-// $( "#r3spinner" ).on( "spin", function( e, ui ) { $('#r3slider').slider("value",ui.value); ptx=[]; pty=[]; } );
-// $( "#r3spinner" ).on( "change", function() {  varchange() } );
+  // monitoring change in value and connecting slider and number
+  // setting trace point coordinate arrays to empty on change of link length
+  $( "#aslider" ).on( "slide", function( e, ui ) { $('#aspinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
+  $( "#aspinner" ).on( "spin", function( e, ui ) { $('#aslider').slider("value",ui.value); ptx=[]; pty=[]; } );
+  $( "#aspinner" ).on( "change", function() {  varchange() } );
 
-/*//Variable r4 slider and number input types
-$('#r4slider').slider({ max : 100, min : 20, step : 2 });		// slider initialisation : jQuery widget
-$('#r4spinner').spinner({ max : 100, min : 20, step : 2 });		// number initialisation : jQuery widget			
-// monitoring change in value and connecting slider and number
-// setting trace point coordinate arrays to empty on change of link length
-$( "#r4slider" ).on( "slide", function( e, ui ) { $('#r4spinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
-$( "#r4spinner" ).on( "spin", function( e, ui ) { $('#r4slider').slider("value",ui.value); ptx=[]; pty=[]; } );
-$( "#r4spinner" ).on( "change", function() {  varchange() } );
-*/
-//Variable theta2 slider and number input types
-$('#forceslider').slider({ max : 360, min : 0, step : 2 });		// slider initialisation : jQuery widget
-$('#forcespinner').spinner({ max : 360, min : 0, step : 2 });		// number initialisation : jQuery widget			
-// monitoring change in value and connecting slider and number
-// setting trace point coordinate arrays to empty on change of link length
-$( "#forceslider" ).on( "slide", function( e, ui ) { $('#forcespinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
-$( "#forcespinner" ).on( "spin", function( e, ui ) { $('#forceslider').slider("value",ui.value); ptx=[]; pty=[]; } );
-$( "#forcespinner" ).on( "change", function() {  varchange() } );
 
-//Variable omega2 slider and number input types
-// $('#omega2slider').slider({ max : 1.8, min : 0.2, step : 0.2 });		// slider initialisation : jQuery widget
-// $('#omega2spinner').spinner({ max : 1.8, min : 0.2, step : 0.2 });		// number initialisation : jQuery widget			
-// monitoring change in value and connecting slider and number
-// setting trace point coordinate arrays to empty on change of link length
-// $( "#omega2slider" ).on( "slide", function( e, ui ) { $('#omega2spinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
-// $( "#omega2spinner" ).on( "spin", function( e, ui ) { $('#omega2slider').slider("value",ui.value); ptx=[]; pty=[]; } );
-// $( "#omega2spinner" ).on( "change", function() {  varchange() } );
+  //Variable force slider and number input types
+  $('#forceslider').slider({ max : 360, min : 0, step : 2 });   // slider initialisation : jQuery widget
+  $('#forcespinner').spinner({ max : 360, min : 0, step : 2 });   // number initialisation : jQuery widget      
+  // monitoring change in value and connecting slider and number
+  // setting trace point coordinate arrays to empty on change of link length
+  $( "#forceslider" ).on( "slide", function( e, ui ) { $('#forcespinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
+  $( "#forcespinner" ).on( "spin", function( e, ui ) { $('#forceslider').slider("value",ui.value); ptx=[]; pty=[]; } );
+  $( "#forcespinner" ).on( "change", function() {  varchange() } );
 
-varupdate();
+
+  varupdate();
 
 }
 
@@ -259,149 +128,265 @@ varupdate();
 function varupdate()
 {
 
-$('#aslider').slider("value", $('#aspinner').spinner('value'))
-$('#forceslider').slider("value", $('#forcespinner').spinner('value')); 
-//r=$('#aspinner').spinner("value");
-o.xcoord=0;
-o.ycoord=0;
-draw();
+  $('#aslider').slider("value", $('#aspinner').spinner('value'))
+  $('#forceslider').slider("value", $('#forcespinner').spinner('value')); 
+  load_point = $('#aspinner').spinner("value");
+  load = $('#forcespinner').spinner("value");
+  o.xcoord=0;
+  o.ycoord=0;
+
+  if(scene == FIXED_BEAM)
+    drawForFixed();
+  else if(scene == CANTILEVER_BEAM)
+    drawForCantilever();
+  else
+    drawForThirdOne();
 
 }
 
+
+/*
+-------FOR   FIXED   BEAM------------------------------------------------------- 
+*/
+
 //Simulation graphics
-function draw()
+function drawForFixed()
 {
-
-  var support_length = 30;
-  var support_width = 20;
-  var beamLength = 400;
-
-
-
   canvas = document.getElementById("simscreen");
   ctx = canvas.getContext("2d");
   ctx.clearRect(0,0,550,400);  //clears the complete canvas#simscreen everytime
-  
+
+
   pointtrans(o,trans);
 
- 
-  
   //left support
   ctx.beginPath();  
-  ctx.strokeStyle="#bdbdbd";
+  ctx.strokeStyle="#825723";
   ctx.lineWidth=support_width;
-	ctx.moveTo(o.xcoord,o.ycoord-(support_length/2));
-	ctx.lineTo(o.xcoord,o.ycoord+(support_length/2));
-	ctx.stroke();  
-	ctx.closePath();
+  ctx.moveTo(o.xcoord,o.ycoord-(support_length/2));
+  ctx.lineTo(o.xcoord,o.ycoord+(support_length/2));
+  ctx.stroke();  
+  ctx.closePath();
 
   //right support
   ctx.beginPath();
-  ctx.strokeStyle= "#bdbdbd";
+  ctx.strokeStyle= "#825723";
   ctx.lineWidth=support_width;
-  ctx.moveTo(beamLength+x_offset,o.ycoord - (support_length/2));
-  ctx.lineTo(beamLength + x_offset, o.ycoord + (support_length/2));
+  ctx.moveTo(beamLength+x_offset + support_width,o.ycoord - (support_length/2));
+  ctx.lineTo(beamLength + x_offset + support_width, o.ycoord + (support_length/2));
   ctx.stroke();
   ctx.closePath();
 
 
-  //beam
-	ctx.beginPath();
-   ctx.lineWidth=10;
-	ctx.strokeStyle= "#000";
-	ctx.moveTo(x_offset+support_width/2,o.ycoord);
-	ctx.lineTo(beamLength+x_offset - support_width/2,o.ycoord);
-	ctx.stroke();
-	ctx.closePath();	
+  ctx.beginPath();
+  ctx.lineWidth=beamWidth;
+  ctx.strokeStyle= "#000";
+
+  printcomment("deflection: " + calculatDeflectionForCantilever(load_point, load, load_point), 0);
 
 
-  
-  
-  //pointjoin(o,a,ctx,"#CCCC00",12);
+  var start = new point(x_offset+support_width/2, o.ycoord);
+  for(var x = 0; x < number_of_lines; x++){
+    ctx.moveTo(x_offset+support_width/2 + x*(beamLength/number_of_lines)
+    ,calculatDeflectionForFixed(load_point, load, x*(beamLength/number_of_lines) )+ y_offset);
 
-  //pointdisp(o,ctx,2,"#000000","#003366",'','','');
-  //ctx.strokeStyle="#000";
-  //ctx.arc(o.xcoord,o.ycoord,6,0,2*Math.PI,false);  
-  //ctx.stroke();
- 
-  //pointjoin(a,b,ctx,"#CCCC00",12);
-  
-  //pointdisp(a,ctx,2,"#000000","#003366",'','','');
-  //ctx.strokeStyle="#000";
-  //ctx.arc(a.xcoord,a.ycoord,5,0,2*Math.PI,false);
-  //ctx.stroke(); 
-  //pointdisp(b,ctx,5,"#000000","#003366",'','','');
+    ctx.lineTo(x_offset+support_width/2 + (x+1)*(beamLength/number_of_lines)
+    ,calculatDeflectionForFixed(load_point, load, (x+1)*(beamLength/number_of_lines)) + y_offset);
 
- //drawrem(ctx);
+    ctx.stroke();
 
-// slider element  
-  // ctx.globalAlpha=0.8; 
-  // drawrect(b,50,20,10,ctx,"#CC9933","#CC9933",1);  
-  // ctx.globalAlpha=1;  
-
-
-
-
-  
- /* if(document.getElementById("trace").checked==true)
-  {
-  pointtrace(ptx,pty,ctx,"blue",2);
-  pointdisp(p,ctx,2,'','','',true,1);
   }
-  else
-  {
-  ptx=[];
-  pty=[];
-  }*/
+  ctx.closePath();  
+
+
+  ctx.beginPath();
+  ctx.globalAlpha=0.1;
+  ctx.lineWidth=beamWidth;
+  ctx.strokeStyle= "#000";
+  ctx.moveTo(x_offset+support_width/2 ,o.ycoord);
+  ctx.lineTo(beamLength+x_offset + support_width/2 ,o.ycoord);
+  ctx.stroke();
+  ctx.globalAlpha=1; 
+  ctx.closePath();  
+
+  //draw force arrow
+  drawForceArrow(ctx);
+
+
+}
+function calculatDeflectionForFixed(load_point, load, x){
+  
+  if( x <= load_point ){
+    return deflectionEquationForFixed(load/10000, load_point, x, e, i, beamLength);
+  }
+  else{
+    return deflectionEquationForFixed(load/10000, beamLength- load_point, beamLength-x, e, i, beamLength);
+  }
+
+    
 }
 
+function deflectionEquationForFixed(p, a, x, e, i, l){
+  var b = l -a;
+  return (p*b*b*x*x)*(3*a*l - 3*a*x - b*x) / (6*e*i*l*l*l);
+}
+
+
+/*
+-------FOR   CANTILEVER   BEAM------------------------------------------------------- 
+*/
+
+function drawForCantilever()
+{
+  canvas = document.getElementById("simscreen");
+  ctx = canvas.getContext("2d");
+  ctx.clearRect(0,0,550,400);  //clears the complete canvas#simscreen everytime
+
+
+  pointtrans(o,trans);
+
+  //left support
+  ctx.beginPath();  
+  ctx.strokeStyle="#825723";
+  ctx.lineWidth=support_width;
+  ctx.moveTo(o.xcoord,o.ycoord-(support_length/2));
+  ctx.lineTo(o.xcoord,o.ycoord+(support_length/2));
+  ctx.stroke();  
+  ctx.closePath();
+
+
+  ctx.beginPath();
+  ctx.lineWidth=beamWidth;
+  ctx.strokeStyle= "#000";
+
+  printcomment("deflection: " + calculatDeflectionForCantilever(load_point, load, load_point), 0);
+
+
+  var start = new point(x_offset+support_width/2, o.ycoord);
+  for(var x = 0; x < number_of_lines; x++){
+    ctx.moveTo(x_offset+support_width/2 + x*(beamLength/number_of_lines)
+    ,calculatDeflectionForCantilever(load_point, load, x*(beamLength/number_of_lines) )+ y_offset
+    );
+
+    ctx.lineTo(x_offset+support_width/2 + (x+1)*(beamLength/number_of_lines)
+    ,calculatDeflectionForCantilever(load_point, load, (x+1)*(beamLength/number_of_lines) )+ y_offset);
+
+    ctx.stroke();
+
+  }
+  ctx.closePath();  
+
+
+  ctx.beginPath();
+  ctx.globalAlpha=0.1;
+  ctx.lineWidth=beamWidth;
+  ctx.strokeStyle= "#000";
+  ctx.moveTo(x_offset+support_width/2 ,o.ycoord);
+  ctx.lineTo(beamLength+x_offset + support_width/2 ,o.ycoord);
+  ctx.stroke();
+  ctx.globalAlpha=1; 
+  ctx.closePath();  
+
+  //draw force arrow
+  drawForceArrow(ctx);
+
+
+}
+
+
+function calculatDeflectionForCantilever(load_point, load, x){
+  p = load / 100000;
+  if( x <= load_point ){
+    return (p*x*x)*(3*load_point-x) / (6 * e * i); 
+  }
+  else{
+    return (p*load_point*load_point)*(3*x- load_point ) / (6 * e * i); 
+  }
+    
+}
+
+
+function deflectionEquationForCantilever(p, a, x, e, i){
+  return (p*b*b*x*x)*(3*a*l - 3*a*x - b*x) / (6*e*i*l*l*l);
+}
+
+
+/*
+-------FOR   THIRD   BEAM------------------------------------------------------- 
+*/
+ 
+function drawForThirdOne(){}
+
+
+/*
+-------  GENERAL  ------------------------------------------------------- 
+*/
+
+
 function drawForceArrow(context){
+  //context.save();
+  force_pos_x = $('#aspinner').spinner("value") + x_offset + support_width/2;
+  
+  var deflection;
+  if(scene == FIXED_BEAM)
+     deflection = calculatDeflectionForFixed(load_point, load, load_point);
+  else if(scene == CANTILEVER_BEAM)
+    deflection = calculatDeflectionForCantilever(load_point, load, load_point);
+
+  var arrow_bottom_tip_y = y_offset + deflection - beamWidth/2;
+  var arrow_head_length = 30;
+  var arrow_line_length = 50;
+  var arrow_line_width = 5;
+
+  context.beginPath();
+  context.lineWidth=arrow_line_width;
+  context.strokeStyle="#211b13";
+  context.moveTo(force_pos_x,arrow_bottom_tip_y - arrow_head_length);
+  context.lineTo(force_pos_x,arrow_bottom_tip_y - arrow_head_length-arrow_line_length);
+  context.stroke();
+  context.closePath();
+  
+  drawArrow(force_pos_x,arrow_bottom_tip_y,ctx,270,arrow_head_length,30,'#211b13','',"#211b13");
+}
+
+function changeScene(value){
+  scene = value;
+  if(value == FIXED_BEAM)
+    document.getElementById('simtitle').innerHTML = "Fixed Beam";
+  else if(value == CANTILEVER_BEAM)
+    document.getElementById('simtitle').innerHTML = 'Cantilever Beam';
+  else
+    document.getElementById('simtitle').innerHTML = 'THIRD BEAM';
+}
+
+function drawrem(context)
+{ 
+
+// positioning dimension display  
+   if(theta2%360<=180)
+    offset=-45;
+  else
+    offset=20;
+
+// dimension line      
   context.save();
-   
-  context.lineWidth=10;
-   context.strokeStyle="#000000";
-   context.moveTo(o.xcoord,o.ycoord-offset);
+  context.moveTo(o.xcoord,o.ycoord-offset);
+  context.lineWidth=3;
+  context.strokeStyle="#000000";
   context.lineTo(b.xcoord,o.ycoord-offset);
   context.moveTo(o.xcoord,o.ycoord-offset+5);
   context.lineTo(o.xcoord,o.ycoord-offset-5);
   context.moveTo(b.xcoord,o.ycoord-offset+5);
   context.lineTo(b.xcoord,o.ycoord-offset-5);
   context.stroke();
-
-  force_pos_x = $('#aspinner').spinner("value") + x_offset;
-  var defl_y = o.ycoord-20;
-  var arrow_head_length = 10;
-  drawArrow(force_pos_x,defl_y,ctx,270,arrow_head_length,30,'#000','',"#000");
-}
-
-function drawrem(context)
-{	
-
-// positioning dimension display  
-   if(theta2%360<=180)
-	  offset=-45;
-	else
-	  offset=20;
-
-// dimension line      
-   context.save();
-   context.moveTo(o.xcoord,o.ycoord-offset);
-	context.lineWidth=3;
-   context.strokeStyle="#000000";
-	context.lineTo(b.xcoord,o.ycoord-offset);
-	context.moveTo(o.xcoord,o.ycoord-offset+5);
-	context.lineTo(o.xcoord,o.ycoord-offset-5);
-	context.moveTo(b.xcoord,o.ycoord-offset+5);
-	context.lineTo(b.xcoord,o.ycoord-offset-5);
-	context.stroke();
-	
+  
 // arrows at dimension
   drawArrow(b.xcoord,b.ycoord-offset,context,180,15,30,'#000','',"#000");
   drawArrow(o.xcoord,o.ycoord-offset,context,0,15,30,'#000','',"#000");
-	
+  
 
-// Position Analysis Title	
-	context.save();
+// Position Analysis Title  
+  context.save();
    context.lineWidth=1;
    context.font="12px 'Comic Sans MS'";
    context.fillStyle="#000000";
@@ -409,14 +394,14 @@ function drawrem(context)
    context.restore();
 
 // r, l, d display
-	context.save();
-	context.lineWidth=1;
-	context.strokeStyle="#000000";
-	context.font = "10px Arial";
-	context.strokeText('d', (o.xcoord+b.xcoord)/2,o.ycoord-offset-10);	
-	context.strokeText('r',(o.xcoord+a.xcoord)/2-1,(o.ycoord+a.ycoord)/2+1);
-	context.strokeText('l',(a.xcoord+b.xcoord)/2-1,(a.ycoord+b.ycoord)/2+3);
-	context.restore();
+  context.save();
+  context.lineWidth=1;
+  context.strokeStyle="#000000";
+  context.font = "10px Arial";
+  context.strokeText('d', (o.xcoord+b.xcoord)/2,o.ycoord-offset-10);  
+  context.strokeText('r',(o.xcoord+a.xcoord)/2-1,(o.ycoord+a.ycoord)/2+1);
+  context.strokeText('l',(a.xcoord+b.xcoord)/2-1,(a.ycoord+b.ycoord)/2+3);
+  context.restore();
 }
 
 // prints comments passed as 'commenttext' in location specified by 'commentloc' in the comments box;
@@ -461,16 +446,13 @@ function printcomment(commenttext,commentloc)
 The simulation requires JavaScript to be enabled.
 </noscript>
 
-<!-- 
-Author : Sai Aditya Raman 
-send an email to adityaraman09@gmail.com for any communication
--->
+
 
 <!-- Defining Container for Simulation -->
 <div id="container">
 
 <!-- Replace TITLE with simulation title to be displayed next to logo-->
-<div id="simtitle">Slider Crank Mechanism</div>
+<div id="simtitle">Fixed Beam</div>
 
 <!-- Region for simulation display -->
 <canvas id="simscreen" height="400px" width="550px"></canvas>
@@ -528,19 +510,17 @@ repeat block with new variable name and new id for widgets-->
 
 <!-- Region for User controls of simulation -->
 <div id="controls">
-<img id="playpausebutton" onclick="simstate()" src="sins/bluepausedull.png" />
-<img id="rotationbutton" onclick="rotstate()" src="sins/bluecwdull.png" />
+<button id = "fixedbeam" onClick="changeScene(FIXED_BEAM)">Fixed Beam</button> 
+<button id = "cantileverbeam" onClick="changeScene(CANTILEVER_BEAM)">Cantilever Beam</button> 
+<button id = "thirdone" onClick="drawForThirdOne()">Third Beam</button> 
 
-<!--
-<div class="usercheck">
-<!-- Point tracing
-<input type="checkbox" id="trace" ></input> <p>Trace Mid Point</p>
-<!-- Reset Parameters
-<input type="button" id="resetparams" value="Reset" onclick="varinit();"></input> -->
+<!-- <img id="playpausebutton" onclick="simstate()" src="sins/bluepausedull.png" />
+<img id="rotationbutton" onclick="rotstate()" src="sins/bluecwdull.png" /> -->
+
 </div>
 
 <!-- DND-Copyright display-->
-<div id="copyright" title="Developer : Supreeth Dev"> Copyright &copy; SOLVE The Virtual Lab @ NITK Surathkal </div>
+<div id="copyright" title="Developer : Chandan Naik and Sumanta Dewri Prasad"> Copyright &copy; SOLVE The Virtual Lab @ NITK Surathkal </div>
 
 </div><!-- Container div close -->
 
