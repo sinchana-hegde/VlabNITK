@@ -39,6 +39,14 @@ var number_of_lines = 100;
 var e = 25; //e in the formula
 var i = 25; //i in the formula
 
+//for simply supported beam
+var rollRadius = 4;
+var groundWidth = 50;
+var groundOffset = 50;
+var init_wedge_position = beamLength;
+var wedgePosition = 0;
+
+
 
 var o= new point(0,0,"");
 
@@ -56,7 +64,7 @@ var pty = [];
 
 const FIXED_BEAM = 0;
 const CANTILEVER_BEAM = 1;
-const THIRD_ONE = 2;
+const SIMPLY_SUPPORTED = 2;
 
 var scene = FIXED_BEAM;
 /*
@@ -93,6 +101,9 @@ function varinit()
   $('#forceslider').slider("value", init_force);  
   $('#forcespinner').spinner("value", init_force);
 
+  $('#wedgeSlider').slider("value", init_wedge_position);  
+  $('#wedgeSpinner').spinner("value", init_wedge_position);
+
 }
 
 // Initialise and Monitor variable containing user inputs of system parameters.
@@ -120,6 +131,16 @@ function varchange()
   $( "#forcespinner" ).on( "change", function() {  varchange() } );
 
 
+  //Variable force slider and number input types
+  $('#wedgeSlider').slider({ max : beamLength, min : beamLength/2, step : 2 });   // slider initialisation : jQuery widget
+  $('#wedgeSpinner').spinner({ max : beamLength, min : beamLength/2, step : 2 });   // number initialisation : jQuery widget      
+  // monitoring change in value and connecting slider and number
+  // setting trace point coordinate arrays to empty on change of link length
+  $( "#wedgeSlider" ).on( "slide", function( e, ui ) { $('#wedgeSpinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
+  $( "#wedgeSpinner" ).on( "spin", function( e, ui ) { $('#wedgeSlider').slider("value",ui.value); ptx=[]; pty=[]; } );
+  $( "#wedgeSpinner" ).on( "change", function() {  varchange() } );
+
+
   varupdate();
 
 }
@@ -128,10 +149,24 @@ function varchange()
 function varupdate()
 {
 
+	if(scene == SIMPLY_SUPPORTED){
+		$('#wedgeSlider').slider("enable"); 
+		$('#wedgeSpinner').spinner("enable"); 
+		$('#aslider').slider({ max : wedgePosition, min : 0, step : 5 });    // slider initialisation : jQuery widget
+  		$('#aspinner').spinner({ max : wedgePosition, min : 0, step : 5 });    // number initialisation : jQuery widget
+	}
+	else{
+		$('#wedgeSlider').slider("disable"); 
+		$('#wedgeSpinner').spinner("disable"); 
+	}
   $('#aslider').slider("value", $('#aspinner').spinner('value'))
   $('#forceslider').slider("value", $('#forcespinner').spinner('value')); 
+  $('#wedgeSlider').slider("value", $('#wedgeSpinner').spinner('value')); 
+
   load_point = $('#aspinner').spinner("value");
   load = $('#forcespinner').spinner("value");
+  wedgePosition = $('#wedgeSpinner').spinner("value");
+
   o.xcoord=0;
   o.ycoord=0;
 
@@ -140,7 +175,7 @@ function varupdate()
   else if(scene == CANTILEVER_BEAM)
     drawForCantilever();
   else
-    drawForThirdOne();
+    drawForSimplySupported();
 
 }
 
@@ -156,6 +191,10 @@ function drawForFixed()
   ctx = canvas.getContext("2d");
   ctx.clearRect(0,0,550,400);  //clears the complete canvas#simscreen everytime
 
+  e *= 100;
+  i *= 100; 
+  support_width = 20;
+
 
   pointtrans(o,trans);
 
@@ -163,8 +202,8 @@ function drawForFixed()
   ctx.beginPath();  
   ctx.strokeStyle="#825723";
   ctx.lineWidth=support_width;
-  ctx.moveTo(o.xcoord,o.ycoord-(support_length/2));
-  ctx.lineTo(o.xcoord,o.ycoord+(support_length/2));
+  ctx.moveTo(o.xcoord ,o.ycoord-(support_length/2));
+  ctx.lineTo(o.xcoord ,o.ycoord+(support_length/2));
   ctx.stroke();  
   ctx.closePath();
 
@@ -182,7 +221,10 @@ function drawForFixed()
   ctx.lineWidth=beamWidth;
   ctx.strokeStyle= "#000";
 
-  printcomment("deflection: " + calculatDeflectionForCantilever(load_point, load, load_point), 0);
+  printcomment(",E = " + e +
+  				",I = " + i +
+  				",  deflection: " + calculatDeflectionForFixed(load_point, load, load_point)
+  				,0);
 
 
   var start = new point(x_offset+support_width/2, o.ycoord);
@@ -212,15 +254,18 @@ function drawForFixed()
   //draw force arrow
   drawForceArrow(ctx);
 
+  e /= 100;
+  i /= 100; 
+
 
 }
 function calculatDeflectionForFixed(load_point, load, x){
   
   if( x <= load_point ){
-    return deflectionEquationForFixed(load/10000, load_point, x, e, i, beamLength);
+    return deflectionEquationForFixed(load, load_point, x, e, i, beamLength);
   }
   else{
-    return deflectionEquationForFixed(load/10000, beamLength- load_point, beamLength-x, e, i, beamLength);
+    return deflectionEquationForFixed(load, beamLength- load_point, beamLength-x, e, i, beamLength);
   }
 
     
@@ -243,6 +288,9 @@ function drawForCantilever()
   ctx.clearRect(0,0,550,400);  //clears the complete canvas#simscreen everytime
 
 
+  e *= 1000;
+  i *= 100; 
+
   pointtrans(o,trans);
 
   //left support
@@ -259,7 +307,10 @@ function drawForCantilever()
   ctx.lineWidth=beamWidth;
   ctx.strokeStyle= "#000";
 
-  printcomment("deflection: " + calculatDeflectionForCantilever(load_point, load, load_point), 0);
+  printcomment(",E = " + e +
+  				",I = " + i +
+  				",  deflection: " + calculatDeflectionForCantilever(load_point, load, load_point)
+  				,0);
 
 
   var start = new point(x_offset+support_width/2, o.ycoord);
@@ -290,12 +341,14 @@ function drawForCantilever()
   //draw force arrow
   drawForceArrow(ctx);
 
+  e /= 1000;
+  i /= 100; 
 
 }
 
 
 function calculatDeflectionForCantilever(load_point, load, x){
-  p = load / 100000;
+  p = load;
   if( x <= load_point ){
     return (p*x*x)*(3*load_point-x) / (6 * e * i); 
   }
@@ -312,10 +365,136 @@ function deflectionEquationForCantilever(p, a, x, e, i){
 
 
 /*
--------FOR   THIRD   BEAM------------------------------------------------------- 
+-------FOR   Simply Supported   BEAM------------------------------------------------------- 
 */
  
-function drawForThirdOne(){}
+function drawForSimplySupported(){
+	canvas = document.getElementById("simscreen");
+  ctx = canvas.getContext("2d");
+  ctx.clearRect(0,0,550,400);  //clears the complete canvas#simscreen everytime
+
+  var support_offset = support_width/2;
+  support_width = 36;
+  e *= 100;
+  i *= 100; 
+
+  pointtrans(o,trans);
+
+
+  //left support
+  ctx.beginPath();  
+  ctx.fillStyle="#825723";
+  ctx.moveTo(o.xcoord + support_offset ,o.ycoord+(beamWidth/2));
+  ctx.lineTo(o.xcoord + support_offset +support_width/2,o.ycoord+support_width + beamWidth/2);
+  ctx.lineTo(o.xcoord + support_offset -support_width/2,o.ycoord+support_width + beamWidth/2);
+  ctx.fill();
+  ctx.closePath();
+
+
+  ctx.beginPath();
+  ctx.lineWidth=beamWidth;
+  ctx.strokeStyle= "#000";
+
+  printcomment(",E = " + e +
+  				",I = " + i +
+  				",  deflection: " + calculatDeflectionForSimplySupported(load_point, load, load_point, wedgePosition)
+  				,0);
+
+  var start = new point(x_offset+support_width/2, o.ycoord);
+  for(var x = 0; x < number_of_lines; x++){
+    ctx.moveTo(x_offset+support_offset + x*(beamLength/number_of_lines)
+    ,calculatDeflectionForSimplySupported(load_point, load, x*(beamLength/number_of_lines), wedgePosition )+ y_offset);
+
+    ctx.lineTo(x_offset+support_offset + (x+1)*(beamLength/number_of_lines)
+    ,calculatDeflectionForSimplySupported(load_point, load, (x+1)*(beamLength/number_of_lines), wedgePosition  )+ y_offset);
+    ctx.stroke();
+  }
+  ctx.closePath(); 
+
+
+  var loc_org_x = o.xcoord + support_offset +  wedgePosition ; //variable for the movement of the right beam
+  //right support
+  ctx.beginPath();  
+  ctx.fillStyle="#825723";
+  ctx.moveTo(loc_org_x ,o.ycoord+(beamWidth/2));
+  ctx.lineTo(loc_org_x + support_width/2 - rollRadius,o.ycoord+support_width + beamWidth/2 - rollRadius*2);
+  ctx.lineTo(loc_org_x - support_width/2 + rollRadius,o.ycoord+support_width + beamWidth/2 - rollRadius*2);
+  //ctx.lineTo(o.xcoord,o.ycoord+(beamWidth/2));
+  //ctx.stroke();  
+  ctx.fill();
+  ctx.closePath();
+
+  //left cylinder
+	ctx.beginPath();
+	ctx.lineWidth = 1;
+	ctx.fillStyle="#000";
+	ctx.arc(loc_org_x - support_width/2 + 2*rollRadius
+		, o.ycoord+support_width + beamWidth/2 - rollRadius, rollRadius, 0, 2 * Math.PI);
+	ctx.stroke();
+	ctx.fill();
+	ctx.closePath();	
+
+  //right cylinder 
+  ctx.beginPath();
+	ctx.fillStyle="#000";
+	ctx.lineWidth = 1;
+	ctx.arc(loc_org_x + support_width/2 - 2*rollRadius
+		, o.ycoord+support_width + beamWidth/2 - rollRadius, rollRadius, 0, 2 * Math.PI);
+	ctx.stroke();
+	ctx.fill();
+	ctx.closePath();
+
+  //original beam postion
+  ctx.beginPath();
+  ctx.globalAlpha=0.1;
+  ctx.lineWidth=beamWidth;
+  ctx.strokeStyle= "#000";
+  ctx.moveTo(x_offset + support_offset ,o.ycoord);
+  ctx.lineTo(beamLength+x_offset  ,o.ycoord);
+  ctx.stroke();
+  ctx.globalAlpha=1; 
+  ctx.closePath();  
+
+  //ground
+  ctx.beginPath();
+  ctx.globalAlpha=0.3;
+  ctx.lineWidth=groundWidth;
+  ctx.strokeStyle= "#000";
+  ctx.moveTo(x_offset - groundOffset,o.ycoord + beamWidth/2 + support_width + groundWidth /2);
+  ctx.lineTo(beamLength+x_offset+groundOffset  ,o.ycoord + beamWidth/2 + support_width + groundWidth/2);
+  ctx.stroke();
+  ctx.globalAlpha=1; 
+  ctx.closePath();  
+
+  //draw force arrow
+  support_width = 20;
+  drawForceArrow(ctx);
+
+  
+  e /= 100;
+  i /= 100; 
+
+}
+
+function calculatDeflectionForSimplySupported(load_point, load, x, wedgePosition){
+	
+	if(x <= load_point)
+		return (load * (wedgePosition- load_point ) * x) * ( pow(wedgePosition, 2) - pow( wedgePosition-load_point, 2) -  pow(x,2) ) / (6 * wedgePosition * e*i );
+	else if( x > load_point && x < wedgePosition)
+		return (load * load_point * (wedgePosition- x ) ) * ( 2*wedgePosition*x - pow( load_point, 2) -  pow(x,2) ) / (6 * wedgePosition * e*i);
+	else
+		return  - (load * load_point * (wedgePosition - load_point) * (x - wedgePosition ) * ( (wedgePosition - o.xcoord) + load_point)) / (6 * e * i * wedgePosition ); 
+
+}
+
+
+function pow(num, power){
+	if(power == 1)
+		return num;
+	else
+		return num*pow(num, power-1);
+	
+}
 
 
 /*
@@ -325,13 +504,15 @@ function drawForThirdOne(){}
 
 function drawForceArrow(context){
   //context.save();
-  force_pos_x = $('#aspinner').spinner("value") + x_offset + support_width/2;
+  force_pos_x = $('#aspinner').spinner("value") + x_offset +support_width/2 ;
   
   var deflection;
   if(scene == FIXED_BEAM)
      deflection = calculatDeflectionForFixed(load_point, load, load_point);
   else if(scene == CANTILEVER_BEAM)
     deflection = calculatDeflectionForCantilever(load_point, load, load_point);
+  else if(scene == SIMPLY_SUPPORTED)
+    deflection = calculatDeflectionForSimplySupported(load_point, load, load_point, wedgePosition);
 
   var arrow_bottom_tip_y = y_offset + deflection - beamWidth/2;
   var arrow_head_length = 30;
@@ -356,7 +537,23 @@ function changeScene(value){
   else if(value == CANTILEVER_BEAM)
     document.getElementById('simtitle').innerHTML = 'Cantilever Beam';
   else
-    document.getElementById('simtitle').innerHTML = 'THIRD BEAM';
+    document.getElementById('simtitle').innerHTML = 'Simply Supported Beam';
+}
+
+function changeSceneNext(){
+	if(scene == SIMPLY_SUPPORTED)
+		scene = FIXED_BEAM;
+	else
+		scene++;
+	changeScene(scene);
+}
+
+function changeScenePrev(){
+	if(scene == FIXED_BEAM)
+		scene = SIMPLY_SUPPORTED;
+	else
+		scene--;
+	changeScene(scene);
 }
 
 function drawrem(context)
@@ -461,11 +658,6 @@ The simulation requires JavaScript to be enabled.
 <div id="datatable1" class="datatable"></div>
 <div id="datatable2" class="datatable"></div>
 
-<!-- Equation Reference and Legend for Graphs etc 
-<div id="quickreficon" title="Equations" onclick="showEquations();"></div>
-<div id="quickref"><img id="quickrefimg" src="sins/tick.png"></img></div>
-<div id="legendicon" title="Legend" onclick="showLegend();"></div>
-<div id="legend"><img id="legendimg" src="sins/tick.png"></img></div>
 -->
 <!-- Region for comment / question prompts -->
 <div id="commentboxleft"></div>
@@ -486,23 +678,17 @@ repeat block with new variable name and new id for widgets-->
 <div id="aslider"></div>
 </div>
 
-<!-- <div class="variable">
-<div class="varname"><p title="Link Length">b (cm)</p>
-<input id="r3spinner"></input></div>
-<div id="r3slider"></div>
-</div>
- -->
 <div id = "theta2set" class="variable">
 <div class="varname"><p title='Input Angle'>force (N) </p>
 <input id="forcespinner"></input></div>
 <div id="forceslider"></div>
 </div>
 
-<!-- <div id = "omega2set" class="variable">
-<div class="varname"><p title='Input Angular Velocity'>&omega; (rad/s) </p>
-<input id="omega2spinner"></input></div>
-<div id="omega2slider"></div>
-</div> -->
+<div id = "omega2set" class="variable">
+<div class="varname"><p title='Input Angular Velocity'>support (cm) </p>
+<input id="wedgeSpinner"></input></div>
+<div id="wedgeSlider"></div>
+</div>
 </div>
 
 <!-- DND-Title of region for controls display -->
@@ -510,12 +696,9 @@ repeat block with new variable name and new id for widgets-->
 
 <!-- Region for User controls of simulation -->
 <div id="controls">
-<button id = "fixedbeam" onClick="changeScene(FIXED_BEAM)">Fixed Beam</button> 
-<button id = "cantileverbeam" onClick="changeScene(CANTILEVER_BEAM)">Cantilever Beam</button> 
-<button id = "thirdone" onClick="drawForThirdOne()">Third Beam</button> 
 
-<!-- <img id="playpausebutton" onclick="simstate()" src="sins/bluepausedull.png" />
-<img id="rotationbutton" onclick="rotstate()" src="sins/bluecwdull.png" /> -->
+<img id="playpausebutton" onclick="changeScenePrev()" src="sins/bluebkdulls.png" />
+<img id="rotationbutton" onclick="changeSceneNext()" src="sins/bluefwddulls.png" />
 
 </div>
 
