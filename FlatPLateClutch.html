@@ -1,330 +1,406 @@
 <html lang="en-US">
-  <head>
-  <meta charset="UTF-8">
-  <title>SOLVE - Mechanics of Machines Lab - Flat Plate Clutch</title>
-  <link rel="stylesheet" href="sins/MOMstyle.css" />
-  <!-- <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script> -->
-  <!-- <script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js'></script> -->
-  <script type="text/javascript" src= "sins/jquery.min.js"></script>
-  <script type="text/javascript" src= "sins/jquery-ui.min.js"></script>
-  <script type="text/javascript" src= "sins/MOMscript.js"></script>
-  <script src="sins/graph.ob.js"></script>
-  <script src="sins/graph_use.ob.js"></script>
-  <script src="sins/graph_use2.ob.js"></script>
-  <link href="sins/mathstyle.css" rel="stylesheet" /><!--Stylesheet to display Math functions -->
+
+<head>
+    <meta charset="UTF-8">
+    <title>SOLVE - Mechanics of Machines Lab - Flat Plate Clutch</title>
+    <link rel="stylesheet" href="sins/MOMstyle.css" />
+    <!-- <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script> -->
+    <!-- <script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js'></script> -->
+    <script type="text/javascript" src="sins/jquery.min.js"></script>
+    <script type="text/javascript" src="sins/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="sins/MOMscript.js"></script>
+    <script src="sins/graph.ob.js"></script>
+    <script src="sins/graph_use.ob.js"></script>
+    <script src="sins/graph_use2.ob.js"></script>
+    <link href="sins/mathstyle.css" rel="stylesheet" />
+    <!--Stylesheet to display Math functions -->
 </head>
 
 <body onload="editcss(); startsim(); varinit();printcomment()">
 
-<noscript>
+    <noscript>
 The simulation requires JavaScript to be enabled.
 </noscript>
 
-<div id="container">
-		<div id="simtitle">Flat Plate Clutch</div>
-	<canvas id="simscreen" height="400" width="550"></canvas>
-	<p id="eqn"style="position:absolute; left: 380px; top: 90px;font-size: 24px; font-family: Times New Roman;">M &alpha; W</p><!--Used mathstyle.css file to display equation-->
-	<div id="graph" style="position: absolute;left:250px; top: 180px;width:350px;height:320px"></div>
-</div>
+    <div id="container">
+        <div id="simtitle">Flat Plate Clutch</div>
+        <canvas id="simscreen" height="400" width="550"></canvas>
+        <p id="eqn" style="position:absolute; left: 380px; top: 90px;font-size: 24px; font-family: Times New Roman;">M &alpha; W</p>
+        <!--Used mathstyle.css file to display equation-->
+        <div id="graph" style="position: absolute;left:250px; top: 180px;width:350px;height:320px"></div>
+    </div>
 
-<div id="titleincanvas"></div>
+    <div id="titleincanvas"></div>
 
-<div id="commentboxleft"></div>
+    <div id="commentboxleft"></div>
 
-<div id="vartitle">VARIABLES</div>
-<div id="variables">
-  <div id = "mset" class="variable">
-    <div class="varname"><p title="Speed of the Governor">W (N)&nbsp;</p>
-    <input id="nspinner" ></div>
-	<div id="nslider" style="margin: 5%"></div>
-	<div class="varname"><p title="Speed of the Governor">M (Nm)&nbsp;</p>
-		<input id="Mspinner"></div>
-		<div id="Mslider"></div>
-  </div>
+    <div id="vartitle">VARIABLES</div>
+    <div id="variables">
+        <div id="mset" class="variable">
+            <div class="varname">
+                <p title="Speed of the Governor">W (N)&nbsp;</p>
+                <input id="nspinner"></div>
+            <div id="nslider" style="margin: 5%"></div>
+            <div class="varname">
+                <p title="Speed of the Governor">M (Nm)&nbsp;</p>
+                <input id="Mspinner"></div>
+            <div id="Mslider"></div>
+        </div>
 
-  <div id = "nset" class="variable">
-    <div class="varname"><p title="Height of the Governor">RPM &nbsp; </p>
-    <input id="hval1" type="textbox" style="background-color:white;width:60px;color:black" disabled></div>
-  </div>
-
-
-</div>
-
-
-<div id="ctrltitle">CONTROLS</div>
-  <div id="controls">
-  <div class="usercheck">
-      <input type="checkbox" id="cb" onclick="drawgraphh();" /><p>Show Graph</p><!-- Checkbox to display graph-->
-	</div>
-</div>
-
-<div id="copyright" title="Developer : Bijay Swarnkar"> Copyright &copy; SOLVE The Virtual Lab @ NITK Surathkal </div>
-
-</div>
-<script type="text/javascript">
-  var canvas = document.getElementById("simscreen");//gets canvas id
-	var ctx = canvas.getContext("2d");//gets canvas context
-	
-	//Array to hold datapoints to plot graph
-	var datapoints1 = [];
-
-	//rotation variables
-	var gr = 0;
-	var simstatus = 1;
-	var rotstatus = 1;
-	
-	//animation variables
-	var omegain=1; //angular velocity of driven shaft(bigger plate)
-	var omegaout=1;//angular velocity of driving shaft(smaller plate)
-	var thetain=0;
-	var thetaout=0;
-
-	var d=35; //distance between plates
-
-	var r_out=50;//radius of big plate
-	var r_in=12;//radius of shafts
-	var r=30;//radius of small plate
-	var x1=0;//coordinates for outer disc radial rods
-    var y1=0;
-	var x2=0;
-	var y2=0;
-
-	var x3=0;//coordinates for inner disc radial rods
-    var y3=0;
-	var x4=0;
-	var y4=0;
-	//Here the point() is defind function in proell.js file to define a point
-	var trans = new point(150,150);//top view center point
-	var transa = new point(150,335);//front view center point
-	var transaa = new point(200,450);//graph location
-	//points of proell governor to be drawn in canvas uses point() is defind function in proell.js file
-	//frontview points
-	var o = new point(0,0,"");	//origin
-	var z1 = new point(0,0,"");	//outer radial rod endpoints
-	var z2 = new point(0,0,"");
-	var z3 = new point(0,0,"");
-	var z4 = new point(0,0,"");
-	var s1 = new point(0,0,"");	//inner radial rod endpoints
-	var s2 = new point(0,0,"");
-	var s3 = new point(0,0,"");
-	var s4 = new point(0,0,"");
-	//topview points
-	var p = new point(0,0,"");	//origin
-	var p1 = new point(0,0,"");	//bigger disc end points
-	var p2 = new point(0,0,"");
-	var u1 = new point(0,0,"");	//shaft ends
-	var u2 = new point(0,0,"");
-	var q = new point(0,0,"");	//smaller disc origin
-	var q1 = new point(0,0,"");	//smaller disc endpoints
-	var q2 = new point(0,0,"");
-
-function editcss()
-{
-$('.variable').css('padding-top','20px');
-$('.usercheck').css('left','30px');
-// $('#legend').css("width",document.getElementById('legendimg').width+"px");
-// $('#legend').css("top",419);
-// $('#legend').css("left",342);
-$('#container').css("top",0);
-$('#container').css("left",0);
-$('#legendicon').css("top",471);
-}
-
-function startsim()
-{
-simTimeId=setInterval("varupdate();",100);
-}
-
-function varinit()
-{
-  varchange();		
-  $('#nslider').slider("value", 100);	
-  $('#nspinner').spinner("value", 100);
-  
-  $('#Mslider').slider("value", 10);	
-  $('#Mspinner').spinner("value", 10);
-  
-}
-
-function varchange()
-{
-  $('#nslider').slider({ max : 5000, min : 100, step : 1 });		// slider initialisation : jQuery widget
-  $('#nspinner').spinner({ max : 5000, min : 100, step : 1 });		// number initialisation : jQuery widget
-  $( "#nslider" ).on( "slide", function( e, ui ) { $('#nspinner').spinner("value",ui.value); $('#Mspinner').spinner("value",0.05*ui.value); $('#Mslider').slider("value",0.05*ui.value);});
-  $( "#nspinner" ).on( "spin", function( e, ui ) { $('#nslider').slider("value",ui.value); $('#Mspinner').spinner("value",0.05*ui.value); $('#Mslider').slider("value",0.05*ui.value);});
-  $( "#nspinner" ).on( "change", function() {  varchange() } );
-  $('#Mslider').slider({ max : 250, min : 10, step : 0.5 });		// slider initialisation : jQuery widget
-  $('#Mspinner').spinner({ max : 250, min : 10, step : 0.5 });		// number initialisation : jQuery widget
-  $( "#Mslider" ).on( "slide", function( e, ui ) { $('#Mspinner').spinner("value",ui.value); $('#nspinner').spinner("value",20* ui.value); $('#nslider').slider("value",20*ui.value)});
-  $( "#Mspinner" ).on( "spin", function( e, ui ) { $('#Mslider').slider("value",ui.value);  $('#nspinner').spinner("value",20* ui.value); $('#nslider').slider("value",20*ui.value)});
-  $( "#Mspinner" ).on( "change", function() {  varchange() } );
-  varupdate();
-}
-
-function varupdate()
-{ 
-  Thrust=$('#nspinner').spinner("value");
-  Moment=$('#Mspinner').spinner('value');
-  var thirtyByPi = 9.5499;
-
-  omegain=200;						//n is a mock value for testing
-  thetain = thetain +(0.2*deg(omegain));	//not sure of this omega to theta conversion
-  x1=r_out*Math.cos(rad(thetain));			
-  y1=r_out*Math.sin(rad(thetain));
-  x2=r_out*Math.cos(rad(thetain+90));
-  y2=r_out*Math.sin(rad(thetain+90));
-
-  omegaout=(1200) - ((1200 - 200) * (Thrust - 200) / 5000);
-  thetaout = thetaout +(0.2*deg(omegaout));	//not sure of this omega to theta conversion
-  x3=r*Math.cos(rad(thetaout));
-  y3=r*Math.sin(rad(thetaout));
-  x4=r*Math.cos(rad(thetaout+90));
-  y4=r*Math.sin(rad(thetaout+90));
-  
-  d = 30 - (30*Thrust/10000)+ 1;
-	//front view variables
-  o.xcoord=0;
-  o.ycoord=0;
-  z1.xcoord=x1;
-  z1.ycoord=y1;
-  z2.xcoord=(-1*x1);
-  z2.ycoord=(-1*y1);
-  z3.xcoord=x2;
-  z3.ycoord=y2;
-  z4.xcoord=(-1*x2);
-  z4.ycoord=(-1*y2);
-
-  s1.xcoord=x3;
-  s1.ycoord=y3;
-  s2.xcoord=(-1*x3);
-  s2.ycoord=(-1*y3);
-  s3.xcoord=x4;
-  s3.ycoord=y4;
-  s4.xcoord=(-1*x4);
-  s4.ycoord=(-1*y4);
-
-	//top view variables
-  p.xcoord=0;
-  p.ycoord=0;
-  p1.xcoord=-100;
-  p1.ycoord=0;
-  p2.xcoord=100 + d ;
-  p2.ycoord=0;
-  u1.xcoord=0;
-  u1.ycoord=r_out;
-  u2.xcoord=0;
-  u2.ycoord=(-1*r_out);
-  q.xcoord=d;
-  q.ycoord=0;
-  q1.xcoord=d;
-  q1.ycoord=r;
-  q2.xcoord=d;
-  q2.ycoord=(-1*r);
-
-  document.getElementById("hval1").value = (omegaout*thirtyByPi).toFixed(0);
-
-  draw();
-}
-
-function draw()
-	{
-		ctx.clearRect(0,0,595,550);
-		ctx.font = "12pt Verdana";
-		ctx.fillText("Top View",50,80);
-		ctx.fillText("Front View",50,280);
-		pointtrans(o,transa);
-		pointtrans(z1,transa);
-		pointtrans(z2,transa);
-		pointtrans(z3,transa);
-		pointtrans(z4,transa);
-		pointtrans(s1,transa);
-		pointtrans(s2,transa);
-		pointtrans(s3,transa);
-		pointtrans(s4,transa);
-
-		//Top View Points
-		pointtrans(p1,trans);
-		pointtrans(p2,trans);
-		pointtrans(p,trans);
-        pointtrans(u1,trans);
-		pointtrans(u2,trans);
-		pointtrans(q,trans);
-		pointtrans(q1,trans);
-		pointtrans(q2,trans);
+        <div id="nset" class="variable">
+            <div class="varname">
+                <p title="Height of the Governor">RPM &nbsp; </p>
+                <input id="hval1" type="textbox" style="background-color:white;width:60px;color:black"></div>
+        </div>
 
 
-		//Plotting the co-ordinates 
-	  //	ctx.beginPath();
-		//ctx.lineWidth=1;
-//		ctx.strokeStyle= "#666666"; 
-//		ctx.moveTo(150,o.xcoord);
-//		ctx.lineTo(150,-400);
-//		ctx.lineTo(150,500);
-//		ctx.moveTo(150,250);
-//		ctx.lineTo(50,250);
-//		ctx.lineTo(250,250);
-//		ctx.stroke();
-//		ctx.closePath();
-		
-		//Plotting all the points and connections	
-		//pointdisp() function defined in proell.js file to display a point
-	  	//pointjoin() function defined in proell.js file to join the points in canvas to form a line
-		
-		//Front
-		pointdisp(o,ctx,r_out,'#600217','#600217');
-		pointjoin(o,z1,ctx,"#000000",5);		
-		pointjoin(o,z2,ctx,"#000000",5);
-		pointjoin(o,z3,ctx,"#000000",5);
-		pointjoin(o,z4,ctx,"#000000",5);
-		pointdisp(o,ctx,r,'#7F00FF','#7F00FF');
-		pointjoin(o,s1,ctx,"#0885d8",5);		
-		pointjoin(o,s2,ctx,"#0885d8",5);
-		pointjoin(o,s3,ctx,"#0885d8",5);
-		pointjoin(o,s4,ctx,"#0885d8",5);
-		pointdisp(o,ctx,r_in,'#013220','#013220');
-		//Top
-		pointjoin(p,p2,ctx,"#013220",2*r_in);
-		pointjoin(p,q,ctx,"#797979",50);
-		pointjoin(p1,p,ctx,"#933A16",2*r_in);
-		pointjoin(u1,u2,ctx,"#600217",20);
-		pointjoin(q1,q2,ctx,"#7F00FF",10);
-		
-			
+    </div>
 
 
-		
-	}
-//This function used for plotting graph
-function drawgraphh()
-{
-	document.getElementById("graph").innerHTML = "";
-	if(gr == 0)
-	{
-		document.getElementById("graph").style.visibility = "visible";
-		document.getElementById("eqn").style.visibility = "visible";
-		gr = 1;
-		for(plott=100;plott<=5500;plott++)
-		{
-			var RPM = 9.5499 * ((1200) - ((1200 - 200) * (plott - 200) / 5000));
-			datapoints1.push({x:plott,y:RPM});
-		}
-		drawgraph("graph", datapoints1, "Thrust (N)", "RPM");//Used graph.ob.js and graph_use.ob.js files plot graph	
-	}
-	else if(gr == 1)
-	{
-		document.getElementById("graph").style.visibility = "visible";
-		document.getElementById("eqn").style.visibility = "hidden";
-		gr = 0;
-		datapoints1.length = 0;//clears the datapoints
-	}
-}
+    <div id="ctrltitle">CONTROLS</div>
+    <div id="controls">
+        <div class="usercheck">
+            <input type="checkbox" id="cb" onclick="drawgraphh();" />
+            <p>Show Graph</p>
+            <!-- Checkbox to display graph-->
+        </div>
+    </div>
 
-function printcomment()
-	{
-	  document.getElementById('commentboxleft').style.width='570px';
-	  document.getElementById('commentboxleft').innerHTML = "<center>Change W (Thrust) or M (Moment) to see the change in RPM</center>"; 
-	  // ignore use of deprecated tag <center> . Code is executed only if printcomment function receives inappropriate commentloc value
-	}
-</script>
+    <div id="copyright" title="Developer : Adharsh Kamath"> Copyright &copy; SOLVE The Virtual Lab @ NITK Surathkal </div>
+
+    </div>
+    <script type="text/javascript">
+        var canvas = document.getElementById("simscreen"); //gets canvas id
+        var ctx = canvas.getContext("2d"); //gets canvas context
+
+        //Array to hold datapoints to plot graph
+        var datapoints1 = [];
+
+        //rotation variables
+        var gr = 0;
+        var simstatus = 1;
+        var rotstatus = 1;
+
+        //animation variables
+        var omegain = 1; //angular velocity of driven shaft(bigger plate)
+        var omegaout = 1; //angular velocity of driving shaft(smaller plate)
+        var thetain = 0;
+        var thetaout = 0;
+
+        var d = 20; //distance between plates
+
+        var r_out = 60; //radius of big plate
+        var r_in = 9; //radius of shafts
+        var r = 48; //radius of small plate
+        var x1 = 0; //coordinates for outer disc radial rods
+        var y1 = 0;
+        var x2 = 0;
+        var y2 = 0;
+
+        var x3 = 0; //coordinates for inner disc radial rods
+        var y3 = 0;
+        var x4 = 0;
+        var y4 = 0;
+        //Here the point() is defind function in proell.js file to define a point
+        var trans = new point(150, 150); //top view center point
+        var transa = new point(150, 335); //front view center point
+        var transaa = new point(200, 450); //graph location
+        //frontview points
+        var o = new point(0, 0, ""); //origin
+        var z1 = new point(0, 0, ""); //outer radial rod endpoints
+        var z2 = new point(0, 0, "");
+        var z3 = new point(0, 0, "");
+        var z4 = new point(0, 0, "");
+        var s1 = new point(0, 0, ""); //inner radial rod endpoints
+        var s2 = new point(0, 0, "");
+        var s3 = new point(0, 0, "");
+        var s4 = new point(0, 0, "");
+        //topview points
+        var p = new point(0, 0, ""); //origin
+        var p1 = new point(0, 0, ""); //bigger disc end points
+        var p2 = new point(0, 0, "");
+        var u1 = new point(0, 0, ""); //shaft ends
+        var u2 = new point(0, 0, "");
+        var q = new point(0, 0, ""); //smaller disc origin
+        var q1 = new point(0, 0, ""); //smaller disc endpoints
+        var q2 = new point(0, 0, "");
+        var a1 = new point(0, 0, "");
+        var a2 = new point(0, 0, "");
+        var a3 = new point(0, 0, "");
+        var a4 = new point(0, 0, "");
+        var t1 = new point(0, 0, "");
+        var t2 = new point(0, 0, "");
+        var b1 = new point(0, 0, "");
+        var b2 = new point(0, 0, "");
+        var b3 = new point(0, 0, "");
+        var b4 = new point(0, 0, "");
+        var b5 = new point(0, 0, "");
+        var b6 = new point(0, 0, "");
+        var b7 = new point(0, 0, "");
+        var b8 = new point(0, 0, "");
+        var b9 = new point(0, 0, "");
+        var b10 = new point(0, 0, "");
+
+
+        function editcss() {
+            $('.variable').css('padding-top', '20px');
+            $('.usercheck').css('left', '30px');
+            // $('#legend').css("width",document.getElementById('legendimg').width+"px");
+            // $('#legend').css("top",419);
+            // $('#legend').css("left",342);
+            $('#container').css("top", 0);
+            $('#container').css("left", 0);
+            $('#legendicon').css("top", 471);
+        }
+
+        function startsim() {
+            simTimeId = setInterval("varupdate();", 100);
+        }
+
+        function varinit() {
+            varchange();
+            $('#nslider').slider("value", 100);
+            $('#nspinner').spinner("value", 100);
+
+            $('#Mslider').slider("value", 10);
+            $('#Mspinner').spinner("value", 10);
+
+        }
+
+        function varchange() {
+            $('#nslider').slider({
+                max: 5000,
+                min: 100,
+                step: 1
+            }); // slider initialisation : jQuery widget
+            $('#nspinner').spinner({
+                max: 5000,
+                min: 100,
+                step: 1
+            }); // number initialisation : jQuery widget
+            $("#nslider").on("slide", function(e, ui) {
+                $('#nspinner').spinner("value", ui.value);
+                $('#Mspinner').spinner("value", 0.05 * ui.value);
+                $('#Mslider').slider("value", 0.05 * ui.value);
+            });
+            $("#nspinner").on("spin", function(e, ui) {
+                $('#nslider').slider("value", ui.value);
+                $('#Mspinner').spinner("value", 0.05 * ui.value);
+                $('#Mslider').slider("value", 0.05 * ui.value);
+            });
+            $("#nspinner").on("change", function() {
+                varchange()
+            });
+            $('#Mslider').slider({
+                max: 250,
+                min: 10,
+                step: 0.5
+            }); // slider initialisation : jQuery widget
+            $('#Mspinner').spinner({
+                max: 250,
+                min: 10,
+                step: 0.5
+            }); // number initialisation : jQuery widget
+            $("#Mslider").on("slide", function(e, ui) {
+                $('#Mspinner').spinner("value", ui.value);
+                $('#nspinner').spinner("value", 20 * ui.value);
+                $('#nslider').slider("value", 20 * ui.value)
+            });
+            $("#Mspinner").on("spin", function(e, ui) {
+                $('#Mslider').slider("value", ui.value);
+                $('#nspinner').spinner("value", 20 * ui.value);
+                $('#nslider').slider("value", 20 * ui.value)
+            });
+            $("#Mspinner").on("change", function() {
+                varchange()
+            });
+            varupdate();
+        }
+
+        function varupdate() {
+            Thrust = $('#nspinner').spinner("value");
+            Moment = $('#Mspinner').spinner('value');
+            var thirtyByPi = 9.5499;
+            omegain = 100;
+            thetain = thetain + (0.2 * deg(omegain));
+            x1 = r_out * Math.cos(rad(thetain));
+            y1 = r_out * Math.sin(rad(thetain));
+            x2 = r_out * Math.cos(rad(thetain + 90));
+            y2 = r_out * Math.sin(rad(thetain + 90));
+            omegaout = (400) - ((400 - 100) * (Thrust - 200) / 5000);
+            document.getElementById("hval1").value = (omegaout * thirtyByPi).toFixed(0);
+            thetaout = thetaout + (0.2 * deg(omegaout));
+            x3 = r * Math.cos(rad(thetaout));
+            y3 = r * Math.sin(rad(thetaout));
+            x4 = r * Math.cos(rad(thetaout + 90));
+            y4 = r * Math.sin(rad(thetaout + 90));
+            d = 30 - (30 * Thrust / 10000) + 1;
+            //front view variables
+            o.xcoord = 0;
+            o.ycoord = 0;
+            z1.xcoord = x1;
+            z1.ycoord = y1;
+            z2.xcoord = (-1 * x1);
+            z2.ycoord = (-1 * y1);
+            z3.xcoord = x2;
+            z3.ycoord = y2;
+            z4.xcoord = (-1 * x2);
+            z4.ycoord = (-1 * y2);
+
+            s1.xcoord = x3;
+            s1.ycoord = y3;
+            s2.xcoord = (-1 * x3);
+            s2.ycoord = (-1 * y3);
+            s3.xcoord = x4;
+            s3.ycoord = y4;
+            s4.xcoord = (-1 * x4);
+            s4.ycoord = (-1 * y4);
+
+            //top view variables
+            p.xcoord = 0;
+            p.ycoord = 0;
+            p1.xcoord = -100;
+            p1.ycoord = 0;
+            p2.xcoord = 140 + (d * 0.4);
+            p2.ycoord = 0;
+            u1.xcoord = 0;
+            u1.ycoord = r_out;
+            u2.xcoord = 0;
+            u2.ycoord = (-1 * r_out);
+            q.xcoord = d;
+            q.ycoord = 0;
+            q1.xcoord = 67;
+            q1.ycoord = r;
+            q2.xcoord = 67;
+            q2.ycoord = (-1 * r);
+            a1.xcoord = (16 + 7 * ((Thrust - 100) / 7000));
+            a1.ycoord = r - 2;
+            a2.xcoord = 16;
+            a2.ycoord = 5;
+            a3.xcoord = (16 + 7 * ((Thrust - 100) / 7000));
+            a3.ycoord = -(r - 2);
+            a4.xcoord = 16;
+            a4.ycoord = -5;
+            t1.xcoord = 15;
+            t2.xcoord = 15;
+            t1.ycoord = 15;
+            t2.ycoord = -15;
+            b1.xcoord = 44 + 2 * ((Thrust - 100) / 7000);
+            b1.ycoord = r - 2;
+            b2.xcoord = 44 + 2 * ((Thrust - 100) / 7000);
+            b2.ycoord = 30;
+            b3.xcoord = 44 + 2 * ((Thrust - 100) / 7000);
+            b3.ycoord = -(r - 2);
+            b4.xcoord = 44 + 2 * ((Thrust - 100) / 7000);
+            b4.ycoord = -30;
+
+
+            draw();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, 595, 550);
+            ctx.font = "12pt Verdana";
+            ctx.fillText("Top View", 50, 80);
+            ctx.fillText("Front View", 50, 280);
+            pointtrans(o, transa);
+            pointtrans(z1, transa);
+            pointtrans(z2, transa);
+            pointtrans(z3, transa);
+            pointtrans(z4, transa);
+            pointtrans(s1, transa);
+            pointtrans(s2, transa);
+            pointtrans(s3, transa);
+            pointtrans(s4, transa);
+
+            //Top View Points
+            pointtrans(p1, trans);
+            pointtrans(p, trans);
+            pointtrans(p2, trans);
+            pointtrans(u1, trans);
+            pointtrans(u2, trans);
+            pointtrans(q, trans);
+            pointtrans(q1, trans);
+            pointtrans(q2, trans);
+            pointtrans(a1, trans);
+            pointtrans(a2, trans);
+            pointtrans(a3, trans);
+            pointtrans(a4, trans);
+            pointtrans(t1, trans);
+            pointtrans(t2, trans);
+            pointtrans(b1, trans);
+            pointtrans(b2, trans);
+            pointtrans(b3, trans);
+            pointtrans(b4, trans);
+
+
+
+            //Plotting the co-ordinates 
+            //	ctx.beginPath();
+            //ctx.lineWidth=1;
+            //		ctx.strokeStyle= "#666666"; 
+            //		ctx.moveTo(150,o.xcoord);
+            //		ctx.lineTo(150,-400);
+            //		ctx.lineTo(150,500);
+            //		ctx.moveTo(150,250);
+            //		ctx.lineTo(50,250);
+            //		ctx.lineTo(250,250);
+            //		ctx.stroke();
+            //		ctx.closePath();
+
+            //Front
+            pointdisp(o, ctx, r_out, '#600217', '#600217');
+            pointjoin(o, z1, ctx, "#000000", 5);
+            pointjoin(o, z2, ctx, "#000000", 5);
+            pointjoin(o, z3, ctx, "#000000", 5);
+            pointjoin(o, z4, ctx, "#000000", 5);
+            pointdisp(o, ctx, r, '#7F00FF', '#7F00FF');
+            pointjoin(o, s1, ctx, "#0885d8", 5);
+            pointjoin(o, s2, ctx, "#0885d8", 5);
+            pointjoin(o, s3, ctx, "#0885d8", 5);
+            pointjoin(o, s4, ctx, "#0885d8", 5);
+            pointdisp(o, ctx, r_in, '#013220', '#013220');
+            //Top
+            pointjoin(p1, p2, ctx, "#0C0C0C", 2 * r_in);
+            pointjoin(a1, a2, ctx, "#AABBCC", 10);
+            pointjoin(a3, a4, ctx, "#AABBCC", 10);
+            pointjoin(t1, t2, ctx, "#444444", 14);
+            pointjoin(b1, b2, ctx, "#898989", 50);
+            pointjoin(b3, b4, ctx, "#898989", 50);
+            pointjoin(u1, u2, ctx, "#600217", 20);
+            pointjoin(q1, q2, ctx, "#7F00FF", 12);
+
+
+        }
+        //This function used for plotting graph
+        function drawgraphh() {
+            document.getElementById("graph").innerHTML = "";
+            if (gr == 0) {
+                document.getElementById("graph").style.visibility = "visible";
+                document.getElementById("eqn").style.visibility = "visible";
+                gr = 1;
+                for (plott = 100; plott <= 5500; plott++) {
+                    var RPM = 9.5499 * ((1200) - ((1200 - 200) * (plott - 200) / 5000));
+                    datapoints1.push({
+                        x: plott,
+                        y: RPM
+                    });
+                }
+                drawgraph("graph", datapoints1, "Thrust (N)", "RPM"); //Used graph.ob.js and graph_use.ob.js files plot graph	
+            } else if (gr == 1) {
+                document.getElementById("graph").style.visibility = "visible";
+                document.getElementById("eqn").style.visibility = "hidden";
+                gr = 0;
+                datapoints1.length = 0; //clears the datapoints
+            }
+        }
+
+        function printcomment() {
+            document.getElementById('commentboxleft').style.width = '570px';
+            document.getElementById('commentboxleft').innerHTML = "<center>Change W (Thrust) or M (Moment) to see the change in RPM</center>";
+            // ignore use of deprecated tag <center> . Code is executed only if printcomment function receives inappropriate commentloc value
+        }
+    </script>
 </body>
+
 </html>
