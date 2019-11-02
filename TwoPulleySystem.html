@@ -1,0 +1,501 @@
+<!-- Can Update with the equations as used in Acceleration Analysis File -->
+
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+<meta charset="UTF-8">
+
+<title>SOLVE - Two Pulley System</title>
+
+<!-- DND-Required css and js files -->
+<link rel="stylesheet" href="sins/MOMstyle.css" />
+
+<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
+<script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js'></script>
+
+
+<script type="text/javascript" src= "sins/MOMscript.js"></script>
+
+<script type="text/javascript" >
+//Script specific to simulation
+
+
+//comments section
+var commenttext="Some Text";
+var commentloc=0;
+
+var o= new point(0,0,"");
+
+var p1= new point(0,0,"");
+var p2= new point(0,0,"");
+var DOWN = 1;
+var UP = 0;
+var dir = DOWN;
+
+//graphics section
+var canvas;
+var ctx;
+//timing section
+var simTimeId = setInterval("",'1000');
+var pauseTime = setInterval("",'1000');
+var time=0;
+//point tracing section
+var ptx = [];
+var pty = [];
+
+var k1, k2, mass;
+var vel = 0;
+var vel1 = 0;
+var vel2 = 0;
+
+var frameRate  = 1/30;
+var frameDelay = 100;
+
+
+var ceil_to_floor = 300;
+  var floor_width = 10;
+  var floor_length = 100;
+  var pulley_rad = 10;
+  var pulley_offset_1 = ceil_to_floor/2  + 50;
+  var pulley_offset_2 = ceil_to_floor/2  - 50;
+  var mass_width = 16;
+  var omega;
+
+var mass_offset = 100;
+var blockx = 50 + 5 + 250 + mass_offset;
+var springx1 = pulley_offset_1;
+var springx2 = pulley_offset_2;
+
+
+//change simulation specific css content. e.g. padding on top of variable to adjust appearance in variables window
+function editcss()
+{
+$('.variable').css('padding-top','40px');
+
+}
+
+//start of simulation here; starts the timer with increments of 0.1 seconds
+function startsim()
+{
+simTimeId=setInterval(loop, frameDelay);
+//simTimeId=setInterval("time=time+0.1; varupdate(); ",'100');
+}
+
+// switches state of simulation between 0:Playing & 1:Paused
+
+//Initialise system parameters here
+function varinit()
+{
+  varchange();
+  var init_k1 = 160;
+  var init_k2 = 160;
+  var init_mass = 0.5;
+
+  $('#k1slider').slider("value", init_k1);  
+  $('#k1spinner').spinner("value", init_k1);
+
+
+
+  $('#k2slider').slider("value", init_k2);  
+  $('#k2spinner').spinner("value", init_k2);
+
+  $('#massSlider').slider("value", init_mass);  
+  $('#massSpinner').spinner("value", init_mass);
+
+}
+
+// Initialise and Monitor variable containing user inputs of system parameters.
+//change #id and repeat block for new variable. Make sure new <div> with appropriate #id is included in the markup
+function varchange()
+{
+  //Variable a postion slider and number input types
+  $('#k1slider').slider({ max : 360, min : 140, step : 5 });    // slider initialisation : jQuery widget
+  $('#k1spinner').spinner({ max : 360, min : 140, step : 5 });    // number initialisation : jQuery widget  
+
+  // monitoring change in value and connecting slider and number
+  // setting trace point coordinate arrays to empty on change of link length
+  $( "#k1slider" ).on( "slide", function( e, ui ) { $('#k1spinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
+  $( "#k1spinner" ).on( "spin", function( e, ui ) { $('#k1slider').slider("value",ui.value); ptx=[]; pty=[]; } );
+  $( "#k1spinner" ).on( "change", function() {  varchange() } );
+
+
+  //Variable force slider and number input types
+  $('#k2slider').slider({ max : 360, min : 140, step : 2 });   // slider initialisation : jQuery widget
+  $('#k2spinner').spinner({ max : 360, min : 140, step : 2 });   // number initialisation : jQuery widget      
+  // monitoring change in value and connecting slider and number
+  // setting trace point coordinate arrays to empty on change of link length
+  $( "#k2slider" ).on( "slide", function( e, ui ) { $('#k2spinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
+  $( "#k2spinner" ).on( "spin", function( e, ui ) { $('#k2slider').slider("value",ui.value); ptx=[]; pty=[]; } );
+  $( "#k2spinner" ).on( "change", function() {  varchange() } );
+
+
+  //Variable force slider and number input types
+  $('#massSlider').slider({ max : 3, min : 0.5, step : 0.1 });   // slider initialisation : jQuery widget
+  $('#massSpinner').spinner({ max : 3, min : 0.5, step : 0.1 });   // number initialisation : jQuery widget      
+  // monitoring change in value and connecting slider and number
+  // setting trace point coordinate arrays to empty on change of link length
+  $( "#massSlider" ).on( "slide", function( e, ui ) { $('#massSpinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
+  $( "#massSpinner" ).on( "spin", function( e, ui ) { $('#massSlider').slider("value",ui.value); ptx=[]; pty=[]; } );
+  $( "#massSpinner" ).on( "change", function() {  varchange() } );
+
+
+  //varupdate();
+
+}
+
+//Computing of various system parameters
+//function varupdate()
+var loop = function()
+{
+  $('#k1slider').slider("value", $('#k1spinner').spinner('value'))
+  $('#k2slider').slider("value", $('#k2spinner').spinner('value')); 
+  $('#massSlider').slider("value", $('#massSpinner').spinner('value')); 
+
+  k1 = $('#k1spinner').spinner("value");
+  k2 = $('#k2spinner').spinner("value");
+  mass = $('#massSpinner').spinner("value");
+
+  o.xcoord=0;
+  o.ycoord=0;
+  draw()
+}
+
+
+//Simulation graphics
+function draw()
+{
+
+  time += frameDelay;
+  canvas = document.getElementById("simscreen");
+  ctx = canvas.getContext("2d");
+  ctx.clearRect(0,0,550,400);  
+  
+
+  o.xcoord += 200;
+  o.ycoord += 50;
+
+  //all calculation
+  var max_x1 = 2*mass*9.8 / k1;
+  var max_x2 = 2*mass*9.8 / k2;
+  omega = Math.sqrt(calculateKEffective(k1, k2) / mass);
+
+
+
+  p1.xcoord = o.xcoord + floor_length/2 - pulley_rad;
+  p1.ycoord = o.ycoord + floor_width/2 + pulley_offset_1;
+
+  p2.xcoord = o.xcoord + floor_length/2 + pulley_rad;
+  p2.ycoord = o.ycoord + floor_width/2 + pulley_offset_2;
+
+  var center_rect = new point(p2.xcoord + pulley_rad,p2.ycoord + mass_offset ,"");
+
+  //movement for the mass
+  center_rect.ycoord += 2*(max_x1+max_x2) * Math.cos( omega * time/1000)*50;
+  // printcomment("" + center_rect.ycoord,0);
+
+  //movement for the spring 1
+  p1.ycoord += -max_x1 * Math.cos( omega * time / 1000)*50;
+
+  //movement for spring 2
+  p2.ycoord += max_x2 * Math.cos( omega * time / 1000)*50;
+
+
+
+  // var F_spring = -calculateKEffective(k1,k2) * (blockx - 300);
+  // var a =  F_spring  / mass;
+  // vel += a * frameRate;
+  // center_rect.ycoord += vel * frameRate;
+  // blockx += vel * frameRate;
+  // printcomment("" + center_rect.ycoord,0);
+
+
+  //movement for the spring 1
+  // var F_spring1 = -k1 * (springx1 - 130);
+  // var a1 =  F_spring1  / mass;
+  // vel1 += a1 * frameRate;
+  // p1.ycoord += vel1 * frameRate;
+  // springx1 += vel1 * frameRate;
+ 
+
+
+  // //movement for the spring 1
+  // var F_spring2 = -k2 * (springx2 - 140);
+  // var a2 =  F_spring2  / mass;
+  // vel2 += a2 * frameRate;
+  // p2.ycoord += vel2 * frameRate;
+  // springx2 += vel2 * frameRate;
+
+
+  
+
+  //draw spring left
+  var amt = 10;
+  var spring_width = 6;
+  var sp_x = p1.xcoord;
+  var sp_y = p1.ycoord;
+  var inc = Math.ceil((o.ycoord + ceil_to_floor + floor_width - p1.ycoord )/ amt);
+  // printcomment(""+inc+ " " + (o.ycoord + ceil_to_floor - p1.ycoord), 0);
+
+  for (; sp_y < o.ycoord + ceil_to_floor + floor_width - inc  -5 ; sp_y += inc)
+    {
+        ctx.strokeStyle = 'blue';
+        ctx.beginPath();
+        ctx.lineWidth=1;
+        ctx.moveTo(sp_x - spring_width, sp_y);
+        ctx.lineTo(sp_x, sp_y+inc/2);
+        ctx.lineTo(sp_x -spring_width, sp_y+inc);
+        ctx.stroke();
+        ctx.closePath();
+
+    }
+
+
+  //draw spring right
+  var sp_x = p2.xcoord;
+  var sp_y = p2.ycoord;
+  var inc = Math.ceil((p2.ycoord - o.ycoord )/ amt);
+  for (; sp_y > o.ycoord + 8 ; sp_y -= inc)
+    {
+        ctx.strokeStyle = 'blue';
+        ctx.beginPath();
+        ctx.lineWidth=1;
+        ctx.moveTo(sp_x - spring_width, sp_y);
+        ctx.lineTo(sp_x, sp_y-inc/2);
+        ctx.lineTo(sp_x -spring_width, sp_y-inc  );
+        ctx.stroke();
+        ctx.closePath();
+
+    }
+
+
+  //pulley 1
+  
+  drawPulley(ctx,p1.xcoord,p1.ycoord,pulley_rad);
+
+  //pulley 2
+  
+  drawPulley(ctx,p2.xcoord,p2.ycoord,pulley_rad);
+
+  
+
+
+  //draw string
+  ctx.beginPath();
+  ctx.strokeStyle= "#616161";
+  ctx.lineWidth=1;
+  ctx.moveTo(p1.xcoord-pulley_rad,o.ycoord);
+  ctx.lineTo(p1.xcoord-pulley_rad,p1.ycoord);
+  ctx.stroke();
+  ctx.closePath();
+
+
+  ctx.beginPath();
+  ctx.strokeStyle= "#616161";
+  ctx.lineWidth=1;
+  ctx.moveTo(p1.xcoord+pulley_rad,p1.ycoord);
+  ctx.lineTo(p1.xcoord+pulley_rad,p2.ycoord);
+  ctx.stroke();
+  ctx.closePath();
+
+
+
+ctx.beginPath();
+  ctx.strokeStyle= "#616161";
+  ctx.lineWidth=1;
+  ctx.moveTo(p1.xcoord+pulley_rad,p1.ycoord);
+  ctx.lineTo(p1.xcoord+pulley_rad,p2.ycoord);
+  ctx.stroke();
+  ctx.closePath();
+
+
+  //draw mass
+
+  
+  drawrect(center_rect, mass_width	, mass_width, 0, ctx, '#37474F', "#37474F", 1);
+
+
+  //last string
+  ctx.beginPath();
+  ctx.strokeStyle= "#616161";
+  ctx.lineWidth=1;
+  ctx.moveTo(p2.xcoord+pulley_rad,p2.ycoord);
+  ctx.lineTo(p2.xcoord+pulley_rad,center_rect.ycoord - mass_width/2);
+  ctx.stroke();
+  ctx.closePath();
+
+
+
+  //top wall
+
+  
+  ctx.beginPath();
+  ctx.strokeStyle= "#000";
+  ctx.lineWidth=floor_width;
+  ctx.moveTo(o.xcoord,o.ycoord);
+  ctx.lineTo(o.xcoord+floor_length,o.ycoord);
+  ctx.stroke();
+  ctx.closePath();
+
+
+  
+  //bottom wall
+  ctx.beginPath();
+  ctx.strokeStyle= "#000";
+  ctx.lineWidth=10;
+  ctx.moveTo(o.xcoord,o.ycoord+ceil_to_floor);
+  ctx.lineTo(o.xcoord+floor_length,o.ycoord+ceil_to_floor);
+  ctx.stroke();
+  ctx.closePath();
+
+
+  //print natural frequency
+  ctx.save();
+  ctx.lineWidth=1;
+  ctx.strokeStyle="#000000";
+  ctx.font = "10px Arial";
+  ctx.strokeText('Omega: ' + parseFloat(omega.toFixed(4)) + ' rad/s', o.xcoord + 120, o.ycoord + ceil_to_floor/2);  
+  ctx.restore();
+
+
+
+};
+
+
+function calculateKEffective(k1,k2){
+
+	return (k1 * k2) / (4 * (k1 + k2));
+
+}
+
+function drawPulley(ctx, x, y, rad){
+
+	ctx.beginPath();
+	ctx.lineWidth = 1;
+	ctx.fillStyle="#4E342E";
+	ctx.arc(x, y, rad, 0, 2 * Math.PI);
+	ctx.stroke();
+	ctx.fill();
+	ctx.closePath();
+
+	ctx.beginPath();
+	ctx.fillStyle="#000";
+	ctx.arc(x, y, 2, 0, 2 * Math.PI);
+	ctx.stroke();
+	ctx.fill();
+	ctx.closePath();
+}
+
+
+// prints comments passed as 'commenttext' in location specified by 'commentloc' in the comments box;
+// 0 : Single comment box, 1 : Left comment box, 2 : Right comment box
+function printcomment(commenttext,commentloc)
+{
+  if(commentloc==0)
+  {
+  document.getElementById('commentboxright').style.visibility='hidden';
+  document.getElementById('commentboxleft').style.width='570px';
+  document.getElementById('commentboxleft').innerHTML = commenttext;
+  }
+  else if(commentloc==1)
+  {
+  document.getElementById('commentboxright').style.visibility='visible';
+  document.getElementById('commentboxleft').style.width='285px';
+  document.getElementById('commentboxleft').innerHTML = commenttext;
+  }
+  else if(commentloc==2)
+  {
+  document.getElementById('commentboxright').style.visibility='visible';
+  document.getElementById('commentboxleft').style.width='285px';
+  document.getElementById('commentboxright').innerHTML = commenttext;
+  }
+  else
+  {
+  document.getElementById('commentboxright').style.visibility='hidden';
+  document.getElementById('commentboxleft').style.width='570px';
+  document.getElementById('commentboxleft').innerHTML = "<center>please report this issue to adityaraman@gmail.com</center>"; 
+  // ignore use of deprecated tag <center> . Code is executed only if printcomment function receives inappropriate commentloc value
+  }
+}
+
+</script>
+
+</head>
+
+<body onload="editcss(); startsim(); varinit();">
+
+<!-- DND-Verifying JavaScript is enabled in browser -->
+<noscript>
+The simulation requires JavaScript to be enabled.
+</noscript>
+
+
+
+<!-- Defining Container for Simulation -->
+<div id="container">
+
+<!-- Replace TITLE with simulation title to be displayed next to logo-->
+<div id="simtitle">Two Pulley System</div>
+
+<!-- Region for simulation display -->
+<canvas id="simscreen" height="400px" width="550px"></canvas>
+
+<div id="titleincanvas"></div>
+<div id="datatable1" class="datatable"></div>
+<div id="datatable2" class="datatable"></div>
+
+-->
+<!-- Region for comment / question prompts -->
+<div id="commentboxleft"></div>
+<div id="commentboxright"></div>
+
+<!-- DND-Title of region for variables display --> 
+<div id="vartitle">VARIABLES</div>
+
+<!-- Region for Input parameters of simulation -->
+<div id="variables">
+
+<!-- System variable input from user through slider and spinner jQuery widgets 
+repeat block with new variable name and new id for widgets-->
+
+<div class="variable">
+<div class="varname"><p title="Link Length">k1 (cm)</p>
+<input id="k1spinner"></input></div>
+<div id="k1slider"></div>
+</div>
+
+<div id = "theta2set" class="variable">
+<div class="varname"><p title='Input Angle'>k2 (cm) </p>
+<input id="k2spinner"></input></div>
+<div id="k2slider"></div>
+</div>
+
+<div id = "omega2set" class="variable">
+<div class="varname"><p title='Input Angular Velocity'>mass (kg) </p>
+<input id="massSpinner"></input></div>
+<div id="massSlider"></div>
+</div>
+</div>
+
+<!-- DND-Title of region for controls display -->
+<div id="ctrltitle">CONTROLS</div>
+
+<!-- Region for User controls of simulation -->
+<div id="controls">
+
+<!-- <img id="playpausebutton" onclick="simstate()" src="sins/bluebkdulls.png" /> -->
+<!-- <img id="rotationbutton" onclick="Reset()" src="sins/bluefwddulls.png" /> -->
+
+</div>
+
+<!-- DND-Copyright display-->
+<div id="copyright" title="Developer : Chandan Naik and Sumanta Dewri Prasad"> Copyright &copy; SOLVE The Virtual Lab @ NITK Surathkal </div>
+
+</div><!-- Container div close -->
+
+<!-- For trials during development
+write in trythis() function the outputs that you want to check.
+<input type='button' onclick='trythis()' value="try me"></input> 
+-->
+</body>
+</html>
