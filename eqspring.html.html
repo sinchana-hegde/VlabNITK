@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+<meta charset="UTF-8">
+
+<title>SOLVE - Mechanics of Machines Lab - Four Bar Mechanism</title>
+
+<!-- DND-Required css and js files -->
+<link rel="stylesheet" href="sins/MOMstyle.css" />
+
+<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
+<script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js'></script>
+
+<script type="text/javascript" src= "sins/MOMscript.js"></script>
+
+<script type="text/javascript" >
+//Script specific to simulation
+
+//program variables
+//controls section
+var simstatus=0; 
+var rotstatus=1;
+//comments section
+var commenttext="Some Text";
+var commentloc=0;
+//computing section
+var trans= new point(100,150);
+var cross= new point(375,150);
+var a= new point(0,0,"A");
+var a1= new point(0,0,"A");
+var a3= new point(0,0,"A");
+var b= new point(0,0,"B");
+var b1= new point(0,0,"B");
+var b3= new point(0,0,"B");
+var c= new point(0,0,"C");
+var d= new point(0,0,"D");
+var d1= new point(0,0,"D");
+var a2= new point(0,0,"A");
+var b2= new point(0,0,"B");
+var c2= new point(0,0,"C");
+var d2= new point(0,0,"D");
+var d3= new point(0,0,"D");
+var d4= new point(0,0,"D");
+var d5= new point(0,0,"D");
+var d6= new point(0,0,"D");
+var d7= new point(0,0,"D");
+var l1= new point(0,0,"l1");
+var l2= new point(0,0,"l2");
+var a3= new point(0,0,"A");
+var a4= new point(0,0,"A");
+var a5= new point(0,0,"A");
+var a6= new point(0,0,"A");
+var a7= new point(0,0,"A");
+var a8= new point(0,0,"A");
+var a9= new point(0,0,"A");
+var a10= new point(0,0,"A");
+var a11= new point(0,0,"A");
+var a12= new point(0,0,"A");
+var a13= new point(0,0,"A");
+var c4=new point(0,0,"C");
+var c5=new point(0,0,"C");
+var c6=new point(0,0,"C");
+var c7=new point(0,0,"C");
+var c8=new point(0,0,"C");
+var c9=new point(0,0,"C");
+var c10=new point(0,0,"C");
+var c11=new point(0,0,"C");
+var c12=new point(0,0,"C");
+var c13=new point(0,0,"C");
+var c3=new point(0,0,"C");
+var b3= new point(0,0,"B");
+var b4= new point(0,0,"B");
+var b5= new point(0,0,"B");
+var b6= new point(0,0,"B");
+var b7= new point(0,0,"B");
+var b8= new point(0,0,"B");
+var b9= new point(0,0,"B");
+var b10= new point(0,0,"B");
+var b11= new point(0,0,"B");
+var b12= new point(0,0,"B");
+var b13= new point(0,0,"B");
+var b14= new point(0,0,"B");
+var b15= new point(0,0,"B");
+var b16= new point(0,0,"B");
+var b17= new point(0,0,"B");
+var b18= new point(0,0,"B");
+var b19= new point(0,0,"B");
+var b20= new point(0,0,"B");
+var b21= new point(0,0,"B");
+var b22= new point(0,0,"B");
+var b23= new point(0,0,"B");
+var b24= new point(0,0,"B");
+var b25= new point(0,0,"B");
+var b26= new point(0,0,"B");
+var b27= new point(0,0,"B");
+var b28= new point(0,0,"B");
+var b29= new point(0,0,"B");
+var b30= new point(0,0,"B");
+var d8= new point(0,0,"D");
+var d9= new point(0,0,"D");
+var d10= new point(0,0,"D");
+var d11= new point(0,0,"D");
+var d12= new point(0,0,"D");
+var d13= new point(0,0,"D");
+var d14= new point(0,0,"D");
+var d15= new point(0,0,"D");
+var a25= new point(0,0,"A");
+var a26= new point(0,0,"A");
+var a27= new point(0,0,"A");
+var a28= new point(0,0,"A");
+var a29= new point(0,0,"A");
+var a30= new point(0,0,"A");
+var a31= new point(0,0,"A");
+var a32= new point(0,0,"A");
+var a33= new point(0,0,"A");
+var a34= new point(0,0,"A");
+var a35= new point(0,0,"A");
+var a36= new point(0,0,"A");
+var a37= new point(0,0,"A");
+var a38= new point(0,0,"A");
+var a39= new point(0,0,"A");
+var a40= new point(0,0,"A");
+var a41= new point(0,0,"A");
+var a42= new point(0,0,"A");
+var a43= new point(0,0,"A");
+var a44= new point(0,0,"A");
+var a45= new point(0,0,"A");
+var a46= new point(0,0,"A");
+var a47= new point(0,0,"A");
+var a48= new point(0,0,"A");
+var a49= new point(0,0,"A");
+var a50= new point(0,0,"A");
+
+
+
+
+
+var r1= 0, r2=0, r3=0, r4=0;
+var theta2 = 55;
+var d=0;
+var velocity=0;
+var bmotion =1; // all angles to be defined either in degrees only or radians only throughout the program and convert as and when required
+var t=0;
+var x=0;
+//slider variables
+var m1=0;
+var m2=0;
+var k=0;
+var c=0;
+// slider variablees
+var z=0;
+var wn=0;
+var wd=0;
+var v2 =0;
+var v1=0;
+
+var k1=0;
+var k2=0;
+var k3 =0;
+var theta3=0, theta4=0; // All angles in Degrees. (mention the specification in the script like here) 
+var omega2=1; // angular velocity in rad/s
+var omega3=0, omega4=0;
+var gamma=0, gammadash=0, theta3dash=0, theta4dash=0;
+var k,ka,kb,kc,det;
+var flaggrashof=true, firstrun=true;
+var x1=0;
+var x2=0;
+var w1=0;
+var w2=0;
+//graphics section
+var canvas;
+var ctx;
+//timing section
+var simTimeId = setInterval("",'1000');
+var pauseTime = setInterval("",'1000');
+var time=0;
+//point tracing section
+var ptx = [];
+var pty = [];
+//click status of legend and quick reference
+var legendCS = false;
+var quickrefCS = false;
+//temporary or dummy variables
+var temp=0;
+
+/*
+// for trials during development
+function trythis()
+{     alert();}
+*/
+
+//change simulation specific css content. e.g. padding on top of variable to adjust appearance in variables window
+function editcss()
+{
+$('.variable').css('padding-top','20px');
+$('#datatable1').css('position','absolute');
+$('#datatable2').css('position','absolute');
+$('#datatable1').css('left','400px');
+$('#datatable1').css('top','100px');
+$('#datatable2').css('left','100px');
+$('#datatable2').css('top','100px');
+
+//$('#legend').css("width",document.getElementById('legendimg').width+"px");
+//$('#quickref').css("height",document.getElementById('quickrefimg').height+"px");
+
+}
+
+//start of simulation here; starts the timer with increments of 0.1 seconds
+function startsim()
+{
+simTimeId=setInterval("time=time+0.1; varupdate(); ",'100');
+}
+
+// switches state of simulation between 0:Playing & 1:Paused
+function simstate()
+{
+  var imgfilename=document.getElementById('playpausebutton').src;
+  imgfilename = imgfilename.substring(imgfilename.lastIndexOf('/') + 1, imgfilename.lastIndexOf('.'));
+  if (imgfilename=="bluepausedull")
+  {
+    document.getElementById('playpausebutton').src="sins/blueplaydull.png";
+   clearInterval(simTimeId);
+    simstatus=1;
+    $('#theta2spinner').spinner("value",theta2);      //to set simulation parameters on pause
+    pauseTime=setInterval("varupdate();",'100');
+  }
+    if (imgfilename=="blueplaydull")
+  {
+     time=0;      
+     clearInterval(pauseTime);
+    document.getElementById('playpausebutton').src="sins/bluepausedull.png";
+    simTimeId=setInterval("time=time+0.1; varupdate(); ",'100');    
+    simstatus=0;
+  } 
+}
+
+// switches state of rotation between 1:CounterClockWise & -1:Clockwise
+/*function rotstate()
+{
+  var imgfilename=document.getElementById('rotationbutton').src;
+  imgfilename = imgfilename.substring(imgfilename.lastIndexOf('/') + 1, imgfilename.lastIndexOf('.'));
+  if (imgfilename=="bluecwdull")
+  {
+    document.getElementById('rotationbutton').src="sins/blueccwdull.png";
+    rotstatus=-1;
+  }
+    if (imgfilename=="blueccwdull")
+  {
+    document.getElementById('rotationbutton').src="sins/bluecwdull.png";
+    rotstatus=1;
+  } 
+}*/
+
+/*
+//Displaying Equations for Quick Reference
+function showEquations()
+{
+  if(quickrefCS)
+  {
+    $('#quickreficon').css('border', 'double');
+    $('#quickref').css('width', '0px');
+    $('#quickref').css('left', '600px');
+    $('#quickref').css('border', '0px');
+    quickrefCS=false; 
+    
+  }
+  else
+  {
+    $('#quickreficon').css('border', 'inset red');
+    $('#quickref').css('width', document.getElementById('quickrefimg').width+"px");
+    $('#quickref').css("left", 599-document.getElementById('quickrefimg').width+"px");
+    $('#quickref').css('border', 'solid 1px');
+    quickrefCS=true;  
+  }
+}
+
+//Displaying Legend
+function showLegend()
+{
+  if(legendCS)
+  {
+    $('#legendicon').css('border', 'double');
+    $('#legend').css('height', '0px');
+    $('#legend').css('border', '0px');
+    legendCS=false; 
+  }
+  else
+  {
+    $('#legendicon').css('border', 'inset red');
+    $('#legend').css("height", document.getElementById('legendimg').height+"px");
+    $('#legend').css('border', 'solid 1px');
+    legendCS=true;  
+  }
+}
+*/
+
+
+//Initialise system parameters here
+function varinit()
+{
+varchange();    
+//Variable r1 slider and number input types
+$('#r1slider').slider("value", 80); 
+$('#r1spinner').spinner("value", 80);
+//Variable r2 slider and number input types
+$('#r2slider').slider("value", 60); 
+$('#r2spinner').spinner("value", 60);
+//Variable r3 slider and number input types
+$('#r3slider').slider("value", 80); 
+$('#r3spinner').spinner("value", 80);
+//Variable r4 slider and number input types
+$('#r4slider').slider("value", 60); 
+$('#r4spinner').spinner("value", 60);
+//Variable theta2 slider and number input types
+$('#theta2slider').slider("value", 40); 
+$('#theta2spinner').spinner("value", 40);
+//Variable omega2 slider and number input types
+$('#omega2slider').slider("value", 1);  
+$('#omega2spinner').spinner("value", 1);
+}
+
+// Initialise and Monitor variable containing user inputs of system parameters.
+//change #id and repeat block for new variable. Make sure new <div> with appropriate #id is included in the markup
+function varchange()
+{
+//Variable r1 slider and number input types
+$('#r1slider').slider({ max : 5200, min : 4800, step : 5 });   // slider initialisation : jQuery widget
+$('#r1spinner').spinner({ max : 5200, min : 4800, step : 5 });   // number initialisation : jQuery widget      
+// monitoring change in value and connecting slider and number
+// setting trace point coordinate arrays to empty on change of link length
+$( "#r1slider" ).on( "slide", function( e, ui ) { $('#r1spinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
+$( "#r1spinner" ).on( "spin", function( e, ui ) { $('#r1slider').slider("value",ui.value); ptx=[]; pty=[]; } );
+$( "#r1spinner" ).on( "change", function() {  varchange() } );
+
+//Variable r1 slider and number input types
+$('#r2slider').slider({ max : 5200, min : 4800, step : 5 });    // slider initialisation : jQuery widget
+$('#r2spinner').spinner({ max : 5200, min : 4800, step : 5 });    // number initialisation : jQuery widget      
+// monitoring change in value and connecting slider and number
+// setting trace point coordinate arrays to empty on change of link length
+$( "#r2slider" ).on( "slide", function( e, ui ) { $('#r2spinner').spinner("value",ui.value); ptx=[]; pty=[]; r2changed();} );
+$( "#r2spinner" ).on( "spin", function( e, ui ) { $('#r2slider').slider("value",ui.value); ptx=[]; pty=[]; r2changed();} );
+$( "#r2spinner" ).on( "change", function() {  varchange() } );
+
+//Variable r1 slider and number input types
+$('#r3slider').slider({ max : 5200, min : 4800, step : 5 });    // slider initialisation : jQuery widget
+$('#r3spinner').spinner({ max : 5200, min : 4800, step : 5 });    // number initialisation : jQuery widget      
+// monitoring change in value and connecting slider and number
+// setting trace point coordinate arrays to empty on change of link length
+$( "#r3slider" ).on( "slide", function( e, ui ) { $('#r3spinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
+$( "#r3spinner" ).on( "spin", function( e, ui ) { $('#r3slider').slider("value",ui.value); ptx=[]; pty=[]; } );
+$( "#r3spinner" ).on( "change", function() {  varchange() } );
+
+//Variable r1 slider and number input types
+$('#r4slider').slider({ max : 10, min : 5, step : .1 });    // slider initialisation : jQuery widget
+$('#r4spinner').spinner({ max : 10, min : 5, step : .1 });    // number initialisation : jQuery widget      
+// monitoring change in value and connecting slider and number
+// setting trace point coordinate arrays to empty on change of link length
+$( "#r4slider" ).on( "slide", function( e, ui ) { $('#r4spinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
+$( "#r4spinner" ).on( "spin", function( e, ui ) { $('#r4slider').slider("value",ui.value); ptx=[]; pty=[]; } );
+$( "#r4spinner" ).on( "change", function() {  varchange() } );
+
+//Variable theta2 slider and number input types
+$('#theta2slider').slider({ max : 360, min : 0, step : 2 });    // slider initialisation : jQuery widget
+$('#theta2spinner').spinner({ max : 360, min : 0, step : 2 });    // number initialisation : jQuery widget      
+// monitoring change in value and connecting slider and number
+// setting trace point coordinate arrays to empty on change of link length
+$( "#theta2slider" ).on( "slide", function( e, ui ) { $('#theta2spinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
+$( "#theta2spinner" ).on( "spin", function( e, ui ) { $('#theta2slider').slider("value",ui.value); ptx=[]; pty=[]; } );
+$( "#theta2spinner" ).on( "change", function() {  varchange() } );
+
+//Variable omega2 slider and number input types
+$('#omega2slider').slider({ max : 1.8, min : 0.2, step : 0.2 });    // slider initialisation : jQuery widget
+$('#omega2spinner').spinner({ max : 1.8, min : 0.2, step : 0.2 });    // number initialisation : jQuery widget      
+// monitoring change in value and connecting slider and number
+// setting trace point coordinate arrays to empty on change of link length
+$( "#omega2slider" ).on( "slide", function( e, ui ) { $('#omega2spinner').spinner("value",ui.value); ptx=[]; pty=[]; } );
+$( "#omega2spinner" ).on( "spin", function( e, ui ) { $('#omega2slider').slider("value",ui.value); ptx=[]; pty=[]; } );
+$( "#omega2spinner" ).on( "change", function() {  varchange() } );
+
+varupdate();
+
+}
+
+//Four Bar Specific : resetting lower limit of r1 r3 r4 on change of r2
+/*function r2changed()
+{
+
+$('#r1slider').slider({min: $('#r2spinner').spinner('value')});
+$('#r3slider').slider({min: $('#r2spinner').spinner('value')});
+$('#r4slider').slider({min: $('#r2spinner').spinner('value')});
+$('#r1spinner').spinner({min: $('#r2spinner').spinner('value')});
+$('#r3spinner').spinner({min: $('#r2spinner').spinner('value')});
+$('#r4spinner').spinner({min: $('#r2spinner').spinner('value')});
+}*/
+
+//Computing of various system parameters
+function varupdate()
+{
+
+$('#r1slider').slider("value", $('#r1spinner').spinner('value'));  //updating slider location with change in spinner(debug)
+$('#r2slider').slider("value", $('#r2spinner').spinner('value'));
+$('#r3slider').slider("value", $('#r3spinner').spinner('value'));
+$('#r4slider').slider("value", $('#r4spinner').spinner('value'));
+$('#theta2slider').slider("value", $('#theta2spinner').spinner('value')); 
+$('#omega2slider').slider("value", $('#omega2spinner').spinner('value')); 
+
+r1=$('#r1spinner').spinner("value");
+r2=$('#r2spinner').spinner("value");
+r3=$('#r3spinner').spinner("value");
+r4=$('#r4spinner').spinner("value");
+k1=r1;
+k2=r2;
+k3=r3;
+m=r4;
+/*var z=r4/(2*Math.sqrt(r3*r2));
+var v2=2*r1*2*Math.sqrt(700*70)/(r1+r2);
+var wn=Math.sqrt(r3/r2);
+var wd=wn*Math.sqrt(1-(z*z));*/
+// k1=v2/wd;
+// k2=z*wn;
+// k3=wd;
+ke1=k1+k2+k3;
+ke2=(k1*k2*k3)/(k1*k2+k2*k3+k1*k3);
+
+
+if(!simstatus)
+{
+$('#omega2set').show();
+$('#theta2set').hide();
+
+// $('#r1spinner').spinner("disable");
+// $('#r2spinner').spinner("disable");
+// $('#r3spinner').spinner("disable");
+// $('#r4spinner').spinner("disable");
+// $('#r1slider').slider("disable");
+// $('#r2slider').slider("disable");
+// $('#r3slider').slider("disable");
+// $('#r4slider').slider("disable");
+
+$('#omega2slider').slider("disable"); 
+$('#omega2spinner').spinner("disable");
+ 
+$('#theta2slider').slider("disable"); 
+$('#theta2spinner').spinner("disable"); 
+//omega2=$('#omega2spinner').spinner("value");
+//printcomment(omega2,2);
+
+/*d=0.5*700*Math.pow(Math.sqrt(d/350)+0.01*bmotion,2);
+theta2=(120-x-22)/10;
+if((120-d)<-20||bmotion==-1)
+{ k1=v2/wd;
+k2=z*wn;
+k3=wd;
+  bmotion=-1;
+  t=t+.05;
+  x=k1*Math.exp(-k2*t)*Math.sin(k3*t);
+  velocity=k1*k3*Math.exp(-k2*t)*Math.cos(k3*t)-k1*k2*Math.exp(-k2*t)*Math.sin(k3*t);
+}*/
+t=t+.01;
+w1=Math.sqrt(ke1/m);
+w2=Math.sqrt(ke2/m);
+x1=(m*10000/ke1)*(Math.sin(w1*t));
+x2=(m*10000/ke2)*(Math.sin(w2*t));
+
+}
+if(simstatus)
+{
+if(firstrun){r2changed(); firstrun=false;}
+$('#r1spinner').spinner("enable");
+$('#r2spinner').spinner("enable");
+$('#r3spinner').spinner("enable");
+$('#r4spinner').spinner("enable");
+$('#r1slider').slider("enable");
+$('#r2slider').slider("enable");
+$('#r3slider').slider("enable");
+$('#r4slider').slider("enable");
+
+$('#omega2set').hide();
+$('#theta2set').show();/*
+$('#theta2slider').slider("enable"); 
+$('#theta2spinner').spinner("enable");
+$('#omega2slider').slider("disable"); 
+$('#omega2spinner').spinner("disable"); */
+theta2=$('#theta2spinner').spinner("value");
+}
+//checkGrashof();
+//if(flaggrashof){
+/*k=(r2*r2-r3*r3+r4*r4+r1*r1)/2;
+ka=k-r2*(r1-r4)*Math.cos(rad(theta2))-r4*r1;
+kb=-2*r2*r4*Math.sin(rad(theta2));
+kc=k-r2*(r1+r4)*Math.cos(rad(theta2))+r4*r1;
+det=kb*kb-4*ka*kc;*/
+a.xcoord=100;
+a.ycoord=-60-x1;
+c.xcoord=180;
+c.ycoord=-60-x2;
+l1.xcoord=0;
+l1.ycoord=-180;
+l2.xcoord=360;
+l2.ycoord=-180;
+
+   b.xcoord=180;
+  b.ycoord=-60-x2;
+  a49.xcoord=100;
+  a49.ycoord=-60;
+  
+  //start
+  a1.xcoord=260;
+a1.ycoord=-60-x2;
+a3.xcoord=100;
+a3.ycoord=-180;
+a13.xcoord=260;
+a13.ycoord=-180;
+a48.xcoord=260;
+a48.ycoord=-180;
+b12.xcoord=100;
+b12.ycoord=-180;
+b22.xcoord=100;
+b22.ycoord=-180;
+a50.xcoord=260;
+a50.ycoord=-60;
+
+   /*b1.xcoord=170;
+  b1.ycoord=-180+2*theta2;
+  d1.xcoord=195;
+  d1.ycoord=-180+3*theta2;
+  b3.xcoord=170;
+  b3.ycoord=-180+4*theta2;
+  d3.xcoord=195;
+  d3.ycoord=-180+5*theta2;
+
+  d2.xcoord=170;
+  d2.ycoord=-180+6*theta2;
+  d4.xcoord=195;
+  d4.ycoord=-180+7*theta2;
+  d5.xcoord=170;
+  d5.ycoord=-180+8*theta2;
+  d6.xcoord=195;
+  d6.ycoord=-180+9*theta2;
+  d7.xcoord=170;
+  d7.ycoord=-180+10*theta2;*/
+  b1.xcoord=100;
+  b1.ycoord=-160;
+  d1.xcoord=115;
+  d1.ycoord=-150+1*((a.ycoord-15-b1.ycoord)/8);
+  c3.xcoord=85;
+  c3.ycoord=-150+2*((a.ycoord-15-b1.ycoord)/8);
+  d3.xcoord=115;
+  d3.ycoord=-150+3*((a.ycoord-15-b1.ycoord)/8);
+
+  d2.xcoord=85;
+  d2.ycoord=-150+4*((a.ycoord-15-b1.ycoord)/8);
+  d4.xcoord=115;
+  d4.ycoord=-150+5*((a.ycoord-15-b1.ycoord)/8);
+  d5.xcoord=85;
+  d5.ycoord=-150+6*((a.ycoord-15-b1.ycoord)/8);
+  d6.xcoord=100;
+  d6.ycoord=-150+7*((a.ycoord-15-b1.ycoord)/8);
+  d7.xcoord=100;
+  d7.ycoord=a.ycoord-15;
+  
+  a4.xcoord=260;
+  a4.ycoord=-150;
+  a5.xcoord=275;
+  a5.ycoord=-150+1*((a1.ycoord-15-a28.ycoord)/8);
+  a6.xcoord=245;
+  a6.ycoord=-150+2*((a1.ycoord-15-a28.ycoord)/8);
+  a7.xcoord=275;
+  a7.ycoord=-150+3*((a1.ycoor-15-a28.ycoord)/8);
+
+
+  a8.xcoord=245;
+  a8.ycoord=-150+4*((a1.ycoord-15-a4.ycoord)/8);
+  a9.xcoord=275;
+  a9.ycoord=-150+5*((a1.ycoord-15-a4.ycoord)/8);
+  a10.xcoord=245;
+  a10.ycoord=-150+6*((a1.ycoord-15-a4.ycoord)/8);
+  a11.xcoord=260;
+  a11.ycoord=-150+7*((a1.ycoord-15-a4.ycoord)/8);
+  a12.xcoord=260;
+  a12.ycoord=a1.ycoord-15;
+
+  a25.xcoord=260;
+  a25.ycoord=-150;
+  a26.xcoord=275;
+  a26.ycoord=-150+1*((a1.ycoord-15-a25.ycoord)/24);
+  a27.xcoord=245;
+  a27.ycoord=-150+2*((a1.ycoord-15-a25.ycoord)/24);
+  a28.xcoord=275;
+  a28.ycoord=-150+3*((a1.ycoord-15-a25.ycoord)/24);
+  a29.xcoord=245;
+  a29.ycoord=-150+4*((a1.ycoord-15-a25.ycoord)/24);
+  a30.xcoord=275;
+  a30.ycoord=-150+5*((a1.ycoord-15-a25.ycoord)/24);
+  a31.xcoord=245;
+  a31.ycoord=-150+6*((a1.ycoord-15-a25.ycoord)/24);
+  a32.xcoord=260;
+  a32.ycoord=-150+7*((a1.ycoord-15-a25.ycoord)/24);
+  
+  
+  a34.xcoord=260;
+  a34.ycoord=-150+8*((a1.ycoord-15-a25.ycoord)/24);
+  a35.xcoord=245;
+  a35.ycoord=-150+9*((a1.ycoord-15-a25.ycoord)/24);
+  a36.xcoord=275;
+  a36.ycoord=-150+10*((a1.ycoord-15-a25.ycoord)/24);
+  a37.xcoord=245;
+  a37.ycoord=-150+11*((a1.ycoord-15-a25.ycoord)/24);
+  a38.xcoord=275;
+  a38.ycoord=-150+12*((a1.ycoord-15-a25.ycoord)/24);
+  a39.xcoord=260;
+  a39.ycoord=-150+13*((a1.ycoord-15-a25.ycoord)/24);
+  a40.xcoord=260;
+  a40.ycoord=-150+14*((a1.ycoord-15-a25.ycoord)/24);
+  
+  a41.xcoord=260;
+  a41.ycoord=-150+15*((a1.ycoord-15-a25.ycoord)/24);
+  a42.xcoord=245;
+  a42.ycoord=-150+16*((a1.ycoord-15-a25.ycoord)/24);
+  a43.xcoord=275;
+  a43.ycoord=-150+17*((a1.ycoord-15-a25.ycoord)/24);
+  a44.xcoord=245;
+  a44.ycoord=-150+18*((a1.ycoord-15-a25.ycoord)/24);
+  a45.xcoord=275;
+  a45.ycoord=-150+19*((a1.ycoord-15-a25.ycoord)/24);
+  a46.xcoord=260;
+  a46.ycoord=-150+20*((a1.ycoord-15-a25.ycoord)/24);
+  a47.xcoord=260;
+  a47.ycoord=a1.ycoord-15;
+  
+  
+  b3.xcoord=100;
+  b3.ycoord=-140;
+  b4.xcoord=115;
+  b4.ycoord=-150+1*((a.ycoord-15-b3.ycoord)/8);
+  b5.xcoord=85;
+  b5.ycoord=-150+2*((a.ycoord-15-b3.ycoord)/8);
+  b6.xcoord=115;
+  b6.ycoord=-150+3*((a.ycoord-15-b3.ycoord)/8);
+
+  b7.xcoord=85;
+  b7.ycoord=-150+4*((a.ycoord-15-b3.ycoord)/8);
+  b8.xcoord=115;
+  b8.ycoord=-150+5*((a.ycoord-15-b3.ycoord)/8);
+  b9.xcoord=85;
+  b9.ycoord=-150+6*((a.ycoord-15-b3.ycoord)/8);
+  b10.xcoord=100;
+  b10.ycoord=-150+7*((a.ycoord-15-b3.ycoord)/8);
+  b11.xcoord=100;
+  b11.ycoord=a.ycoord-15;
+
+  b13.xcoord=100;
+  b13.ycoord=-120;
+  b14.xcoord=115;
+  b14.ycoord=-150+1*((a.ycoord-15-b13.ycoord)/8);
+  b15.xcoord=85;
+  b15.ycoord=-150+2*((a.ycoord-15-b13.ycoord)/8);
+  b16.xcoord=115;
+  b16.ycoord=-150+3*((a.ycoord-15-b13.ycoord)/8);
+
+  b17.xcoord=85;
+  b17.ycoord=-150+4*((a.ycoord-15-b13.ycoord)/8);
+  b18.xcoord=115;
+  b18.ycoord=-150+5*((a.ycoord-15-b13.ycoord)/8);
+  b19.xcoord=85;
+  b19.ycoord=-150+6*((a.ycoord-15-b13.ycoord)/8);
+  b20.xcoord=100;
+  b20.ycoord=-150+7*((a.ycoord-15-b13.ycoord)/8);
+  b21.xcoord=100;
+  b21.ycoord=a.ycoord-15;
+
+  d8.xcoord=134;
+  d8.ycoord=-180;
+  d9.xcoord=134;
+  d9.ycoord=0;
+  d10.xcoord=65;
+  d10.ycoord=-180;
+  d11.xcoord=65;
+  d11.ycoord=0;
+
+  d12.xcoord=290;
+  d12.ycoord=-180;
+  d13.xcoord=290;
+  d13.ycoord=0;
+  d14.xcoord=230;
+  d14.ycoord=-180;
+  d15.xcoord=230;
+  d15.ycoord=0;
+
+  
+  //end
+
+    //b.xcoord=a.xcoord+(r2*Math.cos(rad(theta2)));
+  //b.ycoord=a.ycoord+(r2*Math.sin(rad(theta2)));
+  d.xcoord=180;
+  d.ycoord=-150;
+  /*b2.xcoord=a2.xcoord+(r2*Math.cos(rad(theta2)));
+  b2.ycoord=a2.ycoord+(r2*Math.sin(rad(theta2)));
+  d2.xcoord=a2.xcoord+(r1);s
+  d2.ycoord=a2.ycoord;
+  if(r1==r3 && r2==r4)
+  {
+    theta4=theta2;
+    if(theta2<180)
+    theta4dash=deg(2*Math.atan((-kb+Math.sqrt(det))/(2*ka)));
+    else
+    theta4dash=deg(2*Math.atan((-kb-Math.sqrt(det))/(2*ka)));
+  }
+  else
+  {
+  theta4=deg(2*Math.atan((-kb-Math.sqrt(det))/(2*ka)));
+  theta4dash=deg(2*Math.atan((-kb+Math.sqrt(det))/(2*ka)));
+  
+  }
+  theta3=deg(Math.asin((r4*Math.sin(rad(theta4))-r2*Math.sin(rad(theta2)))/r3));
+  theta3dash=deg(Math.asin((r4*Math.sin(rad(theta4dash))-r2*Math.sin(rad(theta2)))/r3));
+  
+  c.xcoord=d.xcoord+r4*Math.cos(rad(theta4));
+  c.ycoord=d.ycoord+r4*Math.sin(rad(theta4));
+  c2.xcoord=d2.xcoord+r4*Math.cos(rad(theta4dash));
+  c2.ycoord=d2.ycoord+r4*Math.sin(rad(theta4dash));
+  gamma=theta4-theta3;
+  gammadash=theta4dash-theta3dash;
+  if(theta3<0)
+    theta3+=360;
+  if(theta4<0)
+    theta4+=360;
+  if(theta3dash<0)
+    theta3dash+=360;
+  if(theta4dash<0)
+    theta4dash+=360;
+  if(theta3dash==360)
+    theta3dash=0;
+    dispTables();*/
+printcomment("K1,k2,k3 = spring constants m = mass",1);
+
+dispTables();
+draw();
+
+}
+
+//Simulation graphics
+function draw()
+{
+  canvas = document.getElementById("simscreen");
+  ctx = canvas.getContext("2d");
+  ctx.clearRect(0,0,550,400);  //clears the complete canvas#simscreen everytime
+  //if (flaggrashof)
+  //{ 
+  
+$('#titleincanvas').show();
+$('#datatable1').show();
+$('#datatable2').show(); 
+  a=pointtrans(a,trans);
+  a1=pointtrans(a1,trans);
+  a3=pointtrans(a3,trans);
+  b=pointtrans(b,trans);
+  b1=pointtrans(b1,trans);
+  b3=pointtrans(b3,trans);
+  c=pointtrans(c,trans);
+  d=pointtrans(d,trans);
+  d3=pointtrans(d3,trans);
+  d1=pointtrans(d1,trans);
+  d2=pointtrans(d2,trans);
+  d4=pointtrans(d4,trans);
+  d5=pointtrans(d5,trans);
+  d6=pointtrans(d6,trans);
+  d7=pointtrans(d7,trans);
+  l1=pointtrans(l1,trans);
+  l2=pointtrans(l2,trans);
+  c5=pointtrans(c5,trans);
+  c6=pointtrans(c6,trans);
+  c4=pointtrans(c4,trans);
+  c7=pointtrans(c7,trans);
+  c8=pointtrans(c8,trans);
+  c9=pointtrans(c9,trans);
+  c10=pointtrans(c10,trans);
+  c11=pointtrans(c11,trans);
+  c12=pointtrans(c12,trans);
+  c13=pointtrans(c13,trans);
+  a2=pointtrans(a2,trans);
+  b2=pointtrans(b2,trans);
+  c2=pointtrans(c2,trans);
+  c3=pointtrans(c3,trans);
+  a4=pointtrans(a4,trans);
+  a5=pointtrans(a5,trans);
+  a6=pointtrans(a6,trans);
+  a7=pointtrans(a7,trans);
+  a8=pointtrans(a8,trans);
+  a9=pointtrans(a9,trans);
+  a10=pointtrans(a10,trans);
+  a11=pointtrans(a11,trans);
+  a12=pointtrans(a12,trans);
+  a13=pointtrans(a13,trans);
+  a25=pointtrans(a25,trans);
+  a26=pointtrans(a26,trans);
+  a27=pointtrans(a27,trans);
+  a28=pointtrans(a28,trans);
+  a29=pointtrans(a29,trans);
+  a30=pointtrans(a30,trans);
+  a31=pointtrans(a31,trans);
+  a32=pointtrans(a32,trans);
+  a33=pointtrans(a33,trans);
+  a34=pointtrans(a34,trans);
+  a35=pointtrans(a35,trans);
+  a36=pointtrans(a36,trans);
+  a37=pointtrans(a37,trans);
+  a38=pointtrans(a38,trans);
+  a39=pointtrans(a39,trans);
+  a40=pointtrans(a40,trans);
+  a41=pointtrans(a41,trans);
+  a42=pointtrans(a42,trans);
+  a43=pointtrans(a43,trans);
+  a44=pointtrans(a44,trans);
+  a45=pointtrans(a45,trans);
+  a46=pointtrans(a46,trans);
+  a47=pointtrans(a47,trans);
+  a48=pointtrans(a48,trans);
+
+  
+  
+  b4=pointtrans(b4,trans);
+  b5=pointtrans(b5,trans);
+  b6=pointtrans(b6,trans);
+  b7=pointtrans(b7,trans);
+  b8=pointtrans(b8,trans);
+  b9=pointtrans(b9,trans);
+  b10=pointtrans(b10,trans);
+  b11=pointtrans(b11,trans);
+  b12=pointtrans(b12,trans);
+  b13=pointtrans(b13,trans);
+  b14=pointtrans(b14,trans);
+  b15=pointtrans(b15,trans);
+  b16=pointtrans(b16,trans);
+  b17=pointtrans(b17,trans);
+  b18=pointtrans(b18,trans);
+  b19=pointtrans(b19,trans);
+  b20=pointtrans(b20,trans);
+  b21=pointtrans(b21,trans);
+  b22=pointtrans(b22,trans);
+  
+  d8=pointtrans(d8,trans);
+  d9=pointtrans(d9,trans);
+  d10=pointtrans(d10,trans);
+  d11=pointtrans(d11,trans);
+
+  d12=pointtrans(d12,trans);
+  d13=pointtrans(d13,trans);
+  d14=pointtrans(d14,trans);
+  d15=pointtrans(d15,trans);
+
+  a49=pointtrans(a49,trans);
+  a50=pointtrans(a50,trans);
+
+
+
+  document.getElementById('titleincanvas').innerHTML=" ";
+drawrect(a,50,30,0,ctx,"#005500","#005500",0);
+drawrect(a49,100,1,0,ctx,"#000000","#000000",0);
+drawrect(a1,50,30,0,ctx,"#005500","#005500",0);
+drawrect(a50,100,1,0,ctx,"#000000","#000000",0);
+//pointjoin(c,d,ctx,"#005500",1);
+  //pointjoin(a,b,ctx,"#0066FF");
+  /*pointjoin(b,c,ctx,"#D00000");*/
+  // pointjoin(a1,a3,ctx,"#000000",2);
+  // pointjoin(a3,b1,ctx,"#000000",2);
+  // pointjoin(b1,d1,ctx,"#000000",2);
+  // pointjoin(d1,b3,ctx,"#000000",2);
+  // pointjoin(b3,d3,ctx,"#000000",2);
+  // pointjoin(d2,d3,ctx,"#000000",2);
+  // pointjoin(d2,d4,ctx,"#000000",2);
+  // pointjoin(d4,d5,ctx,"#000000",2);
+  // pointjoin(d5,d6,ctx,"#000000",2);
+  // pointjoin(d7,d6,ctx,"#000000",2);
+//  pointjoin(d3,d1,ctx,"#000000",2);
+pointjoin(c,d,ctx,"#005500",1);
+  pointjoin(c4,c7,ctx,"#000000",2);
+  pointjoin(c10,c11,ctx,"#000000",2);
+  pointjoin(c10,c12,ctx,"#000000",2);
+  pointjoin(c11,c13,ctx,"#000000",2);
+  pointjoin(a3,b1,ctx,"#000000",2);
+
+  pointjoin(b1,d1,ctx,"#FF0000",2);
+  pointjoin(d1,c3,ctx,"#FF0000",2);
+  pointjoin(c3,d3,ctx,"#FF0000",2);
+  pointjoin(d2,d3,ctx,"#FF0000",2);
+  pointjoin(d2,d4,ctx,"#FF0000",2);
+  pointjoin(d4,d5,ctx,"#FF0000",2);
+  pointjoin(d5,d6,ctx,"#FF0000",2);
+  pointjoin(d7,d6,ctx,"#FF0000",2);
+  pointjoin(c5,c6,ctx,"#FF0000",2);
+  pointjoin(c9,c8,ctx,"#FF0000",2);
+
+  
+  /*pointjoin(a4,a13,ctx,"#000000",2);
+  pointjoin(a4,a5,ctx,"#000000",2);
+  pointjoin(a5,a6,ctx,"#000000",2);
+  pointjoin(a6,a7,ctx,"#000000",2);
+  pointjoin(a8,a7,ctx,"#000000",2);
+  pointjoin(a9,a8,ctx,"#000000",2);
+  pointjoin(a9,a10,ctx,"#000000",2);
+  pointjoin(a11,a10,ctx,"#000000",2);
+  pointjoin(a12,a11,ctx,"#000000",2);*/
+
+  /*pointjoin(a4,a13,ctx,"#000000",2);
+  pointjoin(a4,a5,ctx,"#000000",2);
+  pointjoin(a5,a6,ctx,"#000000",2);
+  pointjoin(a6,a7,ctx,"#000000",2);
+  pointjoin(a8,a7,ctx,"#000000",2);
+  pointjoin(a9,a8,ctx,"#000000",2);
+  pointjoin(a9,a10,ctx,"#000000",2);
+  pointjoin(a11,a10,ctx,"#000000",2);
+  pointjoin(a12,a11,ctx,"#000000",2);
+
+  pointjoin(a4,a13,ctx,"#000000",2);
+  pointjoin(a4,a5,ctx,"#000000",2);
+  pointjoin(a5,a6,ctx,"#000000",2);
+  pointjoin(a6,a7,ctx,"#000000",2);
+  pointjoin(a8,a7,ctx,"#000000",2);
+  pointjoin(a9,a8,ctx,"#000000",2);
+  pointjoin(a9,a10,ctx,"#000000",2);
+  pointjoin(a11,a10,ctx,"#000000",2);
+  pointjoin(a12,a11,ctx,"#000000",2);*/
+
+  pointjoin(a25,a26,ctx,"#0000FF",2);
+  pointjoin(a26,a27,ctx,"#0000FF",2);
+  pointjoin(a27,a28,ctx,"#0000FF",2);
+  pointjoin(a28,a29,ctx,"#0000FF",2);
+  pointjoin(a29,a30,ctx,"#0000FF",2);
+  pointjoin(a30,a31,ctx,"#0000FF",2);
+  pointjoin(a31,a32,ctx,"#0000FF",2);
+  //pointjoin(a32,a33,ctx,"#000000",2);
+  pointjoin(a25,a48,ctx,"#000000",2);
+
+  pointjoin(a34,a35,ctx,"#FF0000",2);
+  pointjoin(a35,a36,ctx,"#FF0000",2);
+  pointjoin(a36,a37,ctx,"#FF0000",2);
+  pointjoin(a37,a38,ctx,"#FF0000",2);
+  pointjoin(a38,a39,ctx,"#FF0000",2);
+  pointjoin(a39,a40,ctx,"#FF0000",2);
+  pointjoin(a34,a32,ctx,"#FF0000",2);
+  //pointjoin(a25,a34,ctx,"#000000",2);
+
+  pointjoin(a41,a42,ctx,"#00FF00",2);
+  pointjoin(a42,a43,ctx,"#00FF00",2);
+  pointjoin(a43,a44,ctx,"#00FF00",2);
+  pointjoin(a44,a45,ctx,"#00FF00",2);
+  pointjoin(a46,a45,ctx,"#00FF00",2);
+  pointjoin(a46,a47,ctx,"#00FF00",2);
+  pointjoin(a41,a40,ctx,"#00FF00",2);
+
+  /*pointjoin(a4,a13,ctx,"#000000",2);
+  pointjoin(a4,a5,ctx,"#000000",2);
+  pointjoin(a5,a6,ctx,"#000000",2);
+  pointjoin(a6,a7,ctx,"#000000",2);
+  pointjoin(a8,a7,ctx,"#000000",2);
+  pointjoin(a9,a8,ctx,"#000000",2);
+  pointjoin(a9,a10,ctx,"#000000",2);
+  pointjoin(a11,a10,ctx,"#000000",2);
+  pointjoin(a12,a11,ctx,"#000000",2);*/
+
+  pointjoin(b3,b12,ctx,"#00FF00",2);
+  pointjoin(b4,b5,ctx,"#00FF00",2);
+  pointjoin(b5,b6,ctx,"#00FF00",2);
+  pointjoin(b6,b7,ctx,"#00FF00",2);
+  pointjoin(b8,b7,ctx,"#00FF00",2);
+  pointjoin(b8,b9,ctx,"#00FF00",2);
+  pointjoin(b9,b10,ctx,"#00FF00",2);
+  pointjoin(b10,b11,ctx,"#00FF00",2);
+  pointjoin(b3,b4,ctx,"#00FF00",2);
+
+  pointjoin(b13,b22,ctx,"#0000FF",2);
+  pointjoin(b14,b15,ctx,"#0000FF",2);
+  pointjoin(b15,b16,ctx,"#0000FF",2);
+  pointjoin(b16,b17,ctx,"#0000FF",2);
+  pointjoin(b18,b17,ctx,"#0000FF",2);
+  pointjoin(b18,b19,ctx,"#0000FF",2);
+  pointjoin(b19,b20,ctx,"#0000FF",2);
+  pointjoin(b20,b21,ctx,"#0000FF",2);
+  pointjoin(b13,b14,ctx,"#0000FF",2);
+
+  pointjoin(d8,d9,ctx,"#000000",13);
+  pointjoin(d10,d11,ctx,"#000000",13);
+
+  pointjoin(d12,d13,ctx,"#000000",8);
+  pointjoin(d15,d14,ctx,"#000000",8);
+  //pointjoin(c9,c8,ctx,"#000000",2);
+  
+
+   pointjoin (l1,l2,ctx,"#0066FF");
+  //pointdisp(l1,ctx,2);
+   pointdisp(b1,ctx,2);
+   pointdisp(d1,ctx,2);
+ //  pointdisp(d1,ctx);
+ //  pointdisp(b3,ctx);
+  /*pointdisp(b2,ctx);
+  pointdisp(c2,ctx);
+  pointdisp(d2,ctx);*/
+  pointdisp(c3,ctx,2);
+  pointdisp(d3,ctx,2);
+  pointdisp(d2,ctx,2);
+  pointdisp(d4,ctx,2);
+  pointdisp(d5,ctx,2);
+  pointdisp(d6,ctx,2);
+  pointdisp(d7,ctx,2);
+  
+  /*pointdisp(a4,ctx,2);
+  pointdisp(a5,ctx,2);
+  pointdisp(a6,ctx,2);
+  pointdisp(a7,ctx,2);
+  pointdisp(a8,ctx,2);
+  pointdisp(a9,ctx,2);
+  pointdisp(a10,ctx,2);
+  pointdisp(a11,ctx,2);
+  pointdisp(a12,ctx,2);*/
+
+  pointdisp(b3,ctx,2);
+  pointdisp(b4,ctx,2);
+  pointdisp(b5,ctx,2);
+  pointdisp(b6,ctx,2);
+  pointdisp(b7,ctx,2);
+  pointdisp(b8,ctx,2);
+  pointdisp(b9,ctx,2);
+  pointdisp(b10,ctx,2);
+  pointdisp(b11,ctx,2);
+
+  pointdisp(b13,ctx,2);
+  pointdisp(b14,ctx,2);
+  pointdisp(b15,ctx,2);
+  pointdisp(b16,ctx,2);
+  pointdisp(b17,ctx,2);
+  pointdisp(b18,ctx,2);
+  pointdisp(b19,ctx,2);
+  pointdisp(b20,ctx,2);
+  pointdisp(b21,ctx,2);
+  
+  
+  //}
+  //else
+  //{
+  
+$('#titleincanvas').show();
+$('#datatable1').show();
+$('#datatable2').show();
+  ctx.strokeStyle="#000000";
+  ctx.font = "16px Georgia";
+  ctx.save();
+  //ctx.strokeText("Combination does not satisfy Grashof rule ",100,200);
+  ctx.restore();
+  //printcomment("<center>Please go to non-Grashof simulation<br>if you wish to work with the given link combination</center>",0)
+  
+ /* if(document.getElementById("trace").checked==true)
+  {
+  pointtrace(ptx,pty,ctx,"blue",2);
+  pointdisp(p,ctx,2,'','','',true,1);
+  }
+  else
+  {
+  ptx=[];
+  pty=[];
+  }*/
+}
+//function to check whether links satisfy grashof condition
+/*function checkGrashof()
+{
+  var links= new Array(4);
+  links[0]=r1;
+  links[1]=r2;
+  links[2]=r3;
+  links[3]=r4;
+  links.sort(function(p, q){return p-q});
+  var s=links[0];
+  var p=links[1];
+  var q=links[2];
+  var l=links[3];
+  if (s+l>p+q)
+  { 
+    flaggrashof=false;
+    
+  }
+  else 
+  {
+    flaggrashof=true;
+
+  }
+}*/
+
+function dispTables()
+{
+document.getElementById("datatable1").innerHTML="<p>Springs in Series</p>\
+<table>\
+<tr><td>Equivalent Spring Const.</td><td>"+roundd(ke2,2)+" N/m</td></tr>\
+<tr><td>Displacement</td><td>"+roundd(x2,2)+" m</td></tr>\
+<tr><td>Amplitude</td><td>"+roundd(m*10/ke2,4)+" m</td></tr>\
+</table>";
+
+document.getElementById("datatable2").innerHTML="<p>Springs in Parallel</p>\
+<table>\
+<tr><td>Equivalent Spring Const.</td><td>"+roundd(ke1,2)+" N/m</td></tr>\
+<tr><td>Displacement</td><td>"+roundd(x1,2)+"m</td></tr>\
+<tr><td>Amplitude</td><td>"+roundd(m*10/ke1,4)+"m</td></tr>\
+</table>"; // confirm why only gamma was being displayed in the flash simulation.
+}
+// prints comments passed as 'commenttext' in location specified by 'commentloc' in the comments box;
+// 0 : Single comment box, 1 : Left comment box, 2 : Right comment box
+function printcomment(commenttext,commentloc)
+{
+  if(commentloc==0)
+  {
+  document.getElementById('commentboxright').style.visibility='hidden';
+  document.getElementById('commentboxleft').style.width='570px';
+  document.getElementById('commentboxleft').innerHTML = commenttext;
+  }
+  else if(commentloc==1)
+  {
+  document.getElementById('commentboxright').style.visibility='visible';
+  document.getElementById('commentboxleft').style.width='285px';
+  document.getElementById('commentboxleft').innerHTML = commenttext;
+  }
+  else if(commentloc==2)
+  {
+  document.getElementById('commentboxright').style.visibility='visible';
+  document.getElementById('commentboxleft').style.width='285px';
+  document.getElementById('commentboxright').innerHTML = commenttext;
+  }
+  else
+  {
+  document.getElementById('commentboxright').style.visibility='hidden';
+  document.getElementById('commentboxleft').style.width='570px';
+  document.getElementById('commentboxleft').innerHTML = "<center>please report this issue to adityaraman@gmail.com</center>"; 
+  // ignore use of deprecated tag <center> . Code is executed only if printcomment function receives inappropriate commentloc value
+  }
+}
+
+</script>
+
+</head>
+
+<body onload="editcss(); startsim(); varinit();">
+
+<!-- DND-Verifying JavaScript is enabled in browser -->
+<noscript>
+The simulation requires JavaScript to be enabled.
+</noscript>
+
+<!-- 
+Author : Sai Aditya Raman 
+send an email to adityaraman09@gmail.com for any communication
+-->
+
+<!-- Defining Container for Simulation -->
+<div id="container">
+
+<!-- Replace TITLE with simulation title to be displayed next to logo-->
+<div id="simtitle">Four Bar Mechanism</div>
+
+<!-- Region for simulation display -->
+<canvas id="simscreen" height="400px" width="550px"></canvas>
+
+<div id="titleincanvas"></div>
+<div id="datatable1" class="datatable"></div>
+<div id="datatable2" class="datatable"></div>
+
+<!-- Equation Reference and Legend for Graphs etc 
+<div id="quickreficon" title="Equations" onclick="showEquations();"></div>
+<div id="quickref"><img id="quickrefimg" src="sins/tick.png"></img></div>
+<div id="legendicon" title="Legend" onclick="showLegend();"></div>
+<div id="legend"><img id="legendimg" src="sins/tick.png"></img></div>
+-->
+<!-- Region for comment / question prompts -->
+<div id="commentboxleft"></div>
+<div id="commentboxright"></div>
+
+<!-- DND-Title of region for variables display --> 
+<div id="vartitle">VARIABLES</div>
+
+<!-- Region for Input parameters of simulation -->
+<div id="variables">
+
+<!-- System variable input from user through slider and spinner jQuery widgets 
+repeat block with new variable name and new id for widgets-->
+<div class="variable">
+<div class="varname"><p title="Link Length">k1 (N/m)</p>
+<input id="r1spinner"></input></div>
+<div id="r1slider"></div>
+</div>
+
+<div class="variable">
+<div class="varname"><p title="Link Length">k2 (N/m)</p>
+<input id="r2spinner"></input></div>
+<div id="r2slider"></div>
+</div>
+
+<div class="variable">
+<div class="varname"><p title="Link Length">k3 (N/m)</p>
+<input id="r3spinner"></input></div>
+<div id="r3slider"></div>
+</div>
+
+<div class="variable">
+<div class="varname"><p title="Link Length">mass (m)</p>
+<input id="r4spinner"></input></div>
+<div id="r4slider"></div>
+</div>
+
+<div id = "theta2set" class="variable">
+<div class="varname"><p title='Input Angle'>&theta; (&deg;) </p>
+<input id="theta2spinner"></input></div>
+<div id="theta2slider"></div>
+</div>
+
+
+<!-- DND-Title of region for controls display -->
+<div id="ctrltitle">CONTROLS</div>
+
+<!-- Region for User controls of simulation -->
+<div id="controls">
+<img id="playpausebutton" onclick="simstate()" src="sins/bluepausedull.png" />
+<img id="rotationbutton" onclick="rotstate()" src="sins/bluecwdull.png" />
+
+<!--
+<div class="usercheck">
+<!-- Point tracing
+<input type="checkbox" id="trace" ></input> <p>Trace Mid Point</p>
+<!-- Reset Parameters
+<input type="button" id="resetparams" value="Reset" onclick="varinit();"></input> -->
+</div>
+
+
+<!-- DND-Copyright display-->
+<div id="copyright" title="Developer : SOLVEr"> Copyright &copy; SOLVE The Virtual Lab @ NITK Surathkal </div>
+
+</div><!-- Container div close -->
+
+<!-- For trials during development
+write in trythis() function the outputs that you want to check.
+<input type='button' onclick='trythis()' value="try me"></input> 
+-->
+</body>
+</html>
